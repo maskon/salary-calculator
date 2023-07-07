@@ -7,7 +7,7 @@ const input4 = document.querySelector('#input4')
 const submitBtn = document.querySelector('#submit')
 const cleanInput = document.querySelector('#clean')
 
-
+// Калькулятор
 submitBtn.onclick = function() {
     const sum1 = +(input1.value) * 8
     const sum2 = +(input2.value) - +(input3.value)
@@ -33,6 +33,7 @@ submitBtn.onclick = function() {
     resultElementClean.textContent = 'Чистыми: ' + sumClean + ' ₽'
 }
 
+// Очистить инпуты
 cleanInput.onclick = function() {
     input1.value = ''
     input2.value = ''
