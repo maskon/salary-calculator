@@ -104,18 +104,19 @@ body {
 }
 
 .container {
-    max-width: 600px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 0 5px;
 
 }
 
 .calculator {
+    max-width: 600px;
     display: flex;
     justify-content: center;
     flex-direction: column;
     background-color: #dddddd;
-    margin: 20px 0;
+    margin: 20px auto;
     border-radius: 10px;
 }
 
