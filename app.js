@@ -5,6 +5,7 @@ const input2 = document.querySelector('#input2')
 const input3 = document.querySelector('#input3')
 const input4 = document.querySelector('#input4')
 const submitBtn = document.querySelector('#submit')
+const cleanInput = document.querySelector('#clean')
 
 
 submitBtn.onclick = function() {
@@ -30,8 +31,18 @@ submitBtn.onclick = function() {
 
     resultElement.textContent = sum + ' ₽'
     resultElementClean.textContent = 'Чистыми: ' + sumClean + ' ₽'
-
 }
+
+cleanInput.onclick = function() {
+    input1.value = ''
+    input2.value = ''
+    input3.value = ''
+    input4.value = ''
+    resultElement.textContent = '0'
+    resultElementClean.textContent = '0'
+}
+
+
 
 
 
