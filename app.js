@@ -29,8 +29,8 @@ submitBtn.onclick = function() {
     const sumPercent = sum / 100 * 13
     const sumClean = sum - sumPercent
 
-    resultElement.textContent = sum + ' ₽'
-    resultElementClean.textContent = 'Чистыми: ' + sumClean + ' ₽'
+    resultElement.textContent = sum.toFixed(2) + ' ₽'
+    resultElementClean.textContent = 'Чистыми: ' + sumClean.toFixed(2) + ' ₽'
 }
 
 // Очистить инпуты
