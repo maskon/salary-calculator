@@ -6,26 +6,21 @@
     <link rel="stylesheet" href="style.css">
     <title>Калькулятор</title>
 </head>
-<body>
-    <div class="container">
+    <body>
         <div class="calculator">
             <h1 class="title">Калькулятор</h1>
             <input type="number" class="form-control" placeholder="Какой у вас тариф? " id="input1">
             <input type="number" class="form-control" placeholder="Кол-во всех смен" id="input2">
             <input type="number" class="form-control" placeholder="Кол-во ночных смен" id="input3">
             <input type="number" class="form-control" placeholder="Кол-во праздничных смен" id="input4">
-            <div class="buttons">
-                <button class="btn" id="plus">+</button>
-                <button class="btn" id="minus">-</button>
-            </div>
+            <button class="btn" id="clean">Очистить</button>
             <button class="btn btn-result" id="submit">Вычислить</button>
             <div class="text">
-                <h2 class="subtitle">Результат</h2>
+                <h2 class="subtitle">Результат:</h2>
                 <p class="resultat" id="result">0</p>
                 <p class="resultat" id="result-clean">0</p>
             </div>
          </div>
-    </div>
     <script src="app.js"></script>
-</body>
+    </body>
 </html>
