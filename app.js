@@ -59,9 +59,9 @@ cleanInput.onclick = function() {
     input2.value = ''
     input3.value = ''
     input4.value = ''
-    resultElement.textContent = '0'
+    resultElement.textContent = ''
     resultElement.style.color = ('#333333')
-    resultElementClean.textContent = '0'
+    resultElementClean.textContent = ''
     resultElementClean.style.color = ('#333333')
 }
 
