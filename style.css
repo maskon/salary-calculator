@@ -132,22 +132,27 @@ input:focus {
     font-size: 18px;
 }
 
+.buttons {
+    dispay: flex;
+
 .btn {
-    width: 98%;
+    width: 50%;
     font-size: 20px;
     line-height: 2;
     font-weight: 400;
+    color: #fff;
+    background-color: #0000a8;
     margin: 5px;
     border-radius: 10px;
     transition-duration: .3s;
 }
 
 .btn:hover {
-    background-color: #fff;
+    background-color: #090980;
 }
 
 .btn:focus {
-    background-color: #f5f5f5;
+    background-color: #090980;
     border: 1px solid #555;
 }
 
