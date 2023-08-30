@@ -115,7 +115,7 @@ body {
 
 .title {
     color: #3c3e3e;
-    font-size: 40px;
+    font-size: 32px;
     padding: 10px;
 }
 
@@ -133,7 +133,8 @@ input:focus {
 }
 
 .buttons {
-    dispay: flex;
+    display: flex;
+}
 
 .btn {
     width: 50%;
@@ -183,7 +184,7 @@ input:focus {
     }
     
     .title {
-        font-size: 32px;
+        font-size: 26px;
         text-align: center;
     }
     
@@ -191,7 +192,6 @@ input:focus {
         font-size: 28px;
     }
 }
-
 
 
 
