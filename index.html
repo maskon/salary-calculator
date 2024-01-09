@@ -4,23 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
-    <title>Калькулятор ЗП</title>
+    <title>Калькулятор ЗП АО "САПТ"</title>
 </head>
 <body>
+    <h1 class="title">Калькулятор зарплаты САПТ</h1>
     <div class="calculator">
-        <h1 class="title">Калькулятор ЗП</h1>
-        <input type="number" class="form-control" placeholder="Какой у вас тариф? " id="input1">
-        <input type="number" class="form-control" placeholder="Кол-во всех смен" id="input2">
-        <input type="number" class="form-control" placeholder="Кол-во ночных смен" id="input3">
-        <input type="number" class="form-control" placeholder="Кол-во праздничных смен" id="input4">
+        <div class="calculator__item">
+            <label for="input1">Какой у вас тариф?</label>
+            <input type="number" class="form-control" placeholder="0" id="input1">
+        </div>
+        <div class="calculator__item">
+            <label for="input2">Кол-во всех смен</label>
+            <input type="number" class="form-control" placeholder="0" id="input2">
+        </div>
+        <div class="calculator__item">
+            <label for="input3">Кол-во ночных смен</label>
+            <input type="number" class="form-control" placeholder="0" id="input3">
+        </div>
+        <div class="calculator__item">
+            <label for="input4">Кол-во праздничных смен</label>
+            <input type="number" class="form-control" placeholder="0" id="input4">
+        </div>
         <div class="buttons">
             <button class="btn" id="submit">Вычислить</button>
-            <button class="btn" id="clean">Очистить</button>
+            <button class="btn btn--clear" id="clean">Очистить</button>
         </div>
-        <div class="text">
-            <h2 class="subtitle">Результат:</h2>
-            <p class="resultat" id="result"></p>
+        <div class="text" id="block--result">
+            <h2 class="subtitle">Размер з/п за вычетом НДФЛ:</h2>
             <p class="resultat" id="result-clean"></p>
+            <p class="resultat" id="result"></p>
+            <p class="resultat" id="result-nal"></p>
         </div>
     </div>
     <script src="app.js"></script>

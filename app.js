@@ -1,5 +1,7 @@
 const resultElement = document.querySelector('#result')
 const resultElementClean = document.querySelector('#result-clean')
+const resultElementNal = document.querySelector('#result-nal')
+
 const input1 = document.querySelector('#input1')
 const input2 = document.querySelector('#input2')
 const input3 = document.querySelector('#input3')
@@ -7,8 +9,13 @@ const input4 = document.querySelector('#input4')
 const submitBtn = document.querySelector('#submit')
 const cleanInput = document.querySelector('#clean')
 
+const blockResult = document.querySelector('#block--result')
+
 // Калькулятор
 submitBtn.onclick = function() {
+    
+    blockResult.style.display = 'block'
+    
     const input1Value = +(input1.value)
     const input2Value = +(input2.value)
     const input3Value = +(input3.value)
@@ -38,6 +45,7 @@ submitBtn.onclick = function() {
 
     const sumPercent = sum / 100 * 13
     const sumClean = sum - sumPercent
+    const sumNal = sum - sumClean
     
     if (sum === 0) {
         resultElement.style.color = ('red')
@@ -46,15 +54,20 @@ submitBtn.onclick = function() {
         resultElementClean.textContent = ''
     }
     else if (sum > 0) {
-        resultElement.style.color = ('#333333')
-        resultElementClean.style.color = ('#333333')
-        resultElement.textContent = sum.toFixed(2) + ' ₽'
+        resultElement.style.color = ('#1668e3')
+        resultElementClean.style.color = ('#1668e3')
+        resultElementNal.style.color = ('#1668e3')
+        resultElement.textContent = 'До вычета налога: ' + sum.toFixed(2) + ' ₽'
         resultElementClean.textContent = 'Чистыми: ' + sumClean.toFixed(2) + ' ₽'
+        resultElementNal.textContent = 'Сумма налога: ' + sumNal.toFixed(2) + ' ₽'
     }
 }
 
 // Очистить инпуты
 cleanInput.onclick = function() {
+    
+    blockResult.style.display = 'none'
+    
     input1.value = ''
     input2.value = ''
     input3.value = ''
@@ -63,6 +76,8 @@ cleanInput.onclick = function() {
     resultElement.style.color = ('#333333')
     resultElementClean.textContent = ''
     resultElementClean.style.color = ('#333333')
+    resultElementNal.textContent = ''
+    resultElementNal.style.color = ('#333333')
 }
 
 
