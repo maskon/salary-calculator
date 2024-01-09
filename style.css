@@ -86,13 +86,6 @@ body {
     padding: 10px;
 }
 
-.calculator__item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
 .title {
     color: #3c3e3e;
     font-size: 30px;
@@ -102,10 +95,25 @@ body {
     padding: 10px;
 }
 
-.calculator__item label {
+.calculator__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 18px;
     font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.calculator__item label {
+    position: relative;
     margin-right: 15px;
+}
+
+.calculator__item span {
+    position: absolute;
+    top: 3px;
+    right: -12px;
+    color: red;
 }
 
 .form-control {
