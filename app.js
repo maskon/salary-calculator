@@ -50,7 +50,7 @@ submitBtn.onclick = function() {
     if (sum <= 0) {
         resultElement.style.color = ('red')
         resultElementClean.style.color = ('red')
-        resultElement.textContent = 'Ошибка! Введите коректное значение'
+        resultElement.textContent = 'Ошибка! Введите корректное значение'
         resultElementClean.textContent = ''
     }
     else if (sum > 0) {
