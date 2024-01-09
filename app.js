@@ -50,12 +50,12 @@ submitBtn.onclick = function() {
         resultElementNal.textContent = ''
         
         if (input3Value > input2Value) {
-            resultElement.textContent = 'Ошибка! Ночных смен не может быть больше, чем всего смен!'
+            resultElement.textContent = 'Ошибка! Ночных смен не может быть больше!'
         }
     } else if (input4Value > input2Value) {
         resultElement.style.color = ('red')
         resultElementClean.style.color = ('red')
-        resultElement.textContent = 'Ошибка! Праздничных смен не может быть больше, чем всего смен!'
+        resultElement.textContent = 'Ошибка! Праздничных смен не может быть больше!'
         resultElementClean.textContent = ''
         resultElementNal.textContent = '' 
     } else {
