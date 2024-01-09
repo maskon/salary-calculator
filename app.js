@@ -59,8 +59,9 @@ submitBtn.onclick = function() {
     else if (input3Value > input2Value && input4Value > input2Value) {
         renderBlock()
         renderEror()
-        input4.style.border = '2px solid red'
         input3.style.border = '2px solid red'
+        input4.style.border = '2px solid red'
+        input3.focus()
         resultElement.textContent = 'Ошибка! Ночных и праздничных смен не может быть больше!'
     }
     
@@ -68,6 +69,7 @@ submitBtn.onclick = function() {
         renderBlock()
         renderEror()
         input3.style.border = '2px solid red'
+        input3.focus()
         resultElement.textContent = 'Ошибка! Ночных смен не может быть больше!'
     }
     
@@ -75,6 +77,7 @@ submitBtn.onclick = function() {
         renderBlock()
         renderEror()
         input4.style.border = '2px solid red'
+        input4.focus()
         resultElement.textContent = 'Ошибка! Праздничных смен не может быть больше!'
     }
     
