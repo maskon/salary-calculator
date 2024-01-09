@@ -47,11 +47,12 @@ submitBtn.onclick = function() {
     const sumClean = sum - sumPercent
     const sumNal = sum - sumClean
     
-    if (sum3 <= 0) {
+    if (sum1 * (sum2 + 1) <= 0) {
         resultElement.style.color = ('red')
         resultElementClean.style.color = ('red')
         resultElement.textContent = 'Ошибка! Заполните все обязательные поля'
         resultElementClean.textContent = ''
+        resultElementNal.textContent = ''
     } else {
         resultElement.style.color = ('#1668e3')
         resultElementClean.style.color = ('#1668e3')
