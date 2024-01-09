@@ -6,12 +6,12 @@ const input1 = document.querySelector('#input1')
 const input2 = document.querySelector('#input2')
 const input3 = document.querySelector('#input3')
 const input4 = document.querySelector('#input4')
+
 const submitBtn = document.querySelector('#submit')
 const cleanInput = document.querySelector('#clean')
 
 const blockResult = document.querySelector('#block--result')
 
-// Калькулятор
 submitBtn.onclick = function() {
     
     blockResult.style.display = 'block'
@@ -20,11 +20,6 @@ submitBtn.onclick = function() {
     const input2Value = +(input2.value)
     const input3Value = +(input3.value)
     const input4Value = +(input4.value)
-
-    if(isNaN(input1Value) || isNaN(input2Value) || isNaN(input3Value) || isNaN(input4Value)) {
-        alert('Пожалуйста, введите корректные числовые значения')
-        return; // выходим из функции, чтобы не производить расчеты
-    }
 
     const sum1 = input1Value * 8
     const sum2 = input2Value - input3Value
@@ -50,9 +45,19 @@ submitBtn.onclick = function() {
     if (sum1 * (sum2 + 1) <= 0) {
         resultElement.style.color = ('red')
         resultElementClean.style.color = ('red')
-        resultElement.textContent = 'Ошибка! Заполните все обязательные поля'
+        resultElement.textContent = 'Ошибка! Заполните все обязательные поля!'
         resultElementClean.textContent = ''
         resultElementNal.textContent = ''
+        
+        if (input3Value > input2Value) {
+            resultElement.textContent = 'Ошибка! Ночных смен не может быть больше, чем всего смен!'
+        }
+    } else if (input4Value > input2Value) {
+        resultElement.style.color = ('red')
+        resultElementClean.style.color = ('red')
+        resultElement.textContent = 'Ошибка! Праздничных смен не может быть больше, чем всего смен!'
+        resultElementClean.textContent = ''
+        resultElementNal.textContent = '' 
     } else {
         resultElement.style.color = ('#1668e3')
         resultElementClean.style.color = ('#1668e3')
