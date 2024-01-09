@@ -116,12 +116,20 @@ cleanInput.onclick = function() {
     input2.value = ''
     input3.value = ''
     input4.value = ''
+    
     resultElement.textContent = ''
     resultElement.style.color = ('#333333')
+    
     resultElementClean.textContent = ''
     resultElementClean.style.color = ('#333333')
+    
     resultElementNal.textContent = ''
     resultElementNal.style.color = ('#333333')
+    
+    input1.style.border = '1px solid #b9c0c5'
+    input2.style.border = '1px solid #b9c0c5'
+    input3.style.border = '1px solid #b9c0c5'
+    input4.style.border = '1px solid #b9c0c5'
 }
 
 
