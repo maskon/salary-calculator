@@ -52,8 +52,7 @@ submitBtn.onclick = function() {
         resultElementClean.style.color = ('red')
         resultElement.textContent = 'Ошибка! Заполните все обязательные поля'
         resultElementClean.textContent = ''
-    }
-    else if (sum3 > 0) {
+    } else {
         resultElement.style.color = ('#1668e3')
         resultElementClean.style.color = ('#1668e3')
         resultElementNal.style.color = ('#1668e3')
