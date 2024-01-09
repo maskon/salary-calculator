@@ -42,26 +42,62 @@ submitBtn.onclick = function() {
     const sumClean = sum - sumPercent
     const sumNal = sum - sumClean
     
-    if (sum3 <= 0) {
+    if (input1.value === '' || input2.value === '') {
+        renderBlock()
+        renderEror()
+        
+        if (input2.value === '') {
+            input2.style.border = '2px solid red'
+            input2.focus()
+        }
+        if (input1.value === '') {
+            input1.style.border = '2px solid red'
+            input1.focus()
+        }
+    }
+
+    else if (input3Value > input2Value && input4Value > input2Value) {
+        renderBlock()
+        renderEror()
+        input4.style.border = '2px solid red'
+        input3.style.border = '2px solid red'
+        resultElement.textContent = 'Ошибка! Ночных и праздничных смен не может быть больше!'
+    }
+    
+    else if (input3Value > input2Value) {
+        renderBlock()
+        renderEror()
+        input3.style.border = '2px solid red'
+        resultElement.textContent = 'Ошибка! Ночных смен не может быть больше!'
+    }
+    
+    else if (input4Value > input2Value) {
+        renderBlock()
+        renderEror()
+        input4.style.border = '2px solid red'
+        resultElement.textContent = 'Ошибка! Праздничных смен не может быть больше!'
+    }
+    
+    else { renderBlock() }
+    
+    function renderEror() {
         resultElement.style.color = ('red')
         resultElementClean.style.color = ('red')
         resultElement.textContent = 'Ошибка! Заполните все обязательные поля!'
         resultElementClean.textContent = ''
         resultElementNal.textContent = ''
-        
-        if (input3Value > input2Value) {
-            resultElement.textContent = 'Ошибка! Ночных смен не может быть больше!'
-        }
-    } else if (input4Value > input2Value) {
-        resultElement.style.color = ('red')
-        resultElementClean.style.color = ('red')
-        resultElement.textContent = 'Ошибка! Праздничных смен не может быть больше!'
-        resultElementClean.textContent = ''
-        resultElementNal.textContent = '' 
-    } else {
+    }
+    
+    function renderBlock() {
         resultElement.style.color = ('#1668e3')
         resultElementClean.style.color = ('#1668e3')
         resultElementNal.style.color = ('#1668e3')
+        
+        input1.style.border = '1px solid #b9c0c5'
+        input2.style.border = '1px solid #b9c0c5'
+        input3.style.border = '1px solid #b9c0c5'
+        input4.style.border = '1px solid #b9c0c5'
+        
         resultElement.textContent = 'До вычета налога: ' + sum.toFixed(2) + ' ₽'
         resultElementClean.textContent = 'Чистыми: ' + sumClean.toFixed(2) + ' ₽'
         resultElementNal.textContent = 'Сумма налога: ' + sumNal.toFixed(2) + ' ₽'
