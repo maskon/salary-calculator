@@ -3,19 +3,9 @@
 /*Обнуление*/
 
 * {padding: 0;margin: 0;border:0;}
-*,
-*:before,
-*:after {
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
+
 :focus,
 :active {
-    outline: none;
-}
-a:focus,
-a:active {
     outline: none;
 }
 html,
@@ -23,8 +13,6 @@ body {
     height: 100%;
     width: 100%;
     font-size: 100%;
-    line-height: 1;
-    font-size: 14px;
     -ms-text-size-adjust: 100%;
     -moz-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
@@ -44,18 +32,6 @@ input:focus::-moz-placeholder {
     color: transparent !important;
 }
 input:focus:-ms-input-placeholder {
-    color: transparent !important;
-}
-textarea:focus::-webkit-input-placeholder {
-       color: transparent !important;
-    }
-textarea:focus::-moz-placeholder {
-       color: transparent !important;
-    }
-textarea:focus::-moz-placeholder {
-    color: transparent !important;
-}
-textarea:focus:-ms-input-placeholder {
     color: transparent !important;
 }
 input::-ms-clear {
@@ -206,6 +182,14 @@ input::-moz-placeholder {
     
     .form-control {
         width: 100px;
+    }
+    
+    .subtitle {
+        font-size: 18px;
+    }
+    
+    .resultat {
+        font-size: 18px;
     }
 
 }
