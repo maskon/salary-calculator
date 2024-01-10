@@ -12,6 +12,30 @@ const cleanInput = document.querySelector('#clean')
 
 const blockResult = document.querySelector('#block--result')
 
+input1.addEventListener('input', function () {
+    if (Number(input1.value) < 0) {
+        input1.value = 0
+    }
+})
+
+input2.addEventListener('input', function () {
+    if (Number(input2.value) < 0) {
+        input2.value = 0
+    }
+})
+
+input3.addEventListener('input', function () {
+    if (Number(input3.value) < 0) {
+        input3.value = 0
+    }
+})
+
+input4.addEventListener('input', function () {
+    if (Number(input4.value) < 0) {
+        input4.value = 0
+    }
+})
+
 submitBtn.onclick = function() {
     
     blockResult.style.display = 'block'
