@@ -76,7 +76,6 @@ body {
     justify-content: space-between;
     align-items: center;
     font-size: 18px;
-    font-weight: 700;
     margin-bottom: 10px;
 }
 
@@ -164,13 +163,12 @@ input::-moz-placeholder {
 
 .subtitle {
     font-size: 24px;
-    font-weight: 400;
+    font-weight: 700;
     margin-bottom: 10px;
 }
 
 .resultat {
     font-size: 20px;
-    font-weight: 700;
     margin-bottom: 5px;
 }
 
