@@ -150,11 +150,11 @@ function renderBlock() {
     
     resultElementSubtitle.style.color = '#333333' // <span style="color: blue; font-weight: bold;">${resultElementCleanHTML}</span>
     
-    resultEl[0].innerHTML = `Чистыми: <span style="color: #1668e3;">${resultElementCleanHTML} ₽</span>`
+    resultEl[0].innerHTML = `Чистыми: <span style="color: #1668e3;">${resultElementCleanHTML}</span> ₽`
     
-    resultEl[1].innerHTML = `До вычета налога: <span style="color: #1668e3;">${resultElementHTML} ₽</span>` 
+    resultEl[1].innerHTML = `До вычета налога: <span style="color: #1668e3;">${resultElementHTML}</span> ₽` 
     
-    resultEl[2].innerHTML = `Сумма налога: <span style="color: #1668e3;">${resultElementNalHTML} ₽</span>`
+    resultEl[2].innerHTML = `Сумма налога: <span style="color: #1668e3;">${resultElementNalHTML}</span> ₽`
    
     renderInput() 
 }
