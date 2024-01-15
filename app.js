@@ -11,6 +11,7 @@ const resultElement = document.querySelector('#result')
 const resultElementClean = document.querySelector('#result-clean')
 const resultElementNal = document.querySelector('#result-nal')
 const resultElementSubtitle = document.querySelector('#result-subtitle')
+const resultEl = document.querySelectorAll('.resultat')
 
 let sum
 let sumClean
@@ -83,8 +84,7 @@ submitBtn.onclick = function() {
         input3.style.border = '2px solid red'
         input4.style.border = '2px solid red'
         input3.focus()
-        resultElement.textContent = 'Ошибка! Ночных и праздничных смен не может быть больше!'
-        resultElementSubtitle.textContent = ''
+        resultElementSubtitle.textContent = 'Ошибка! Ночных и праздничных смен не может быть больше!'
     }
     
     else if (Number(input3.value) > Number(input2.value)) {
@@ -92,8 +92,7 @@ submitBtn.onclick = function() {
         renderEror()
         input3.style.border = '2px solid red'
         input3.focus()
-        resultElement.textContent = 'Ошибка! Ночных смен не может быть больше!'
-        resultElementSubtitle.textContent = ''
+        resultElementSubtitle.textContent = 'Ошибка! Ночных смен не может быть больше!'
     }
     
     else if (Number(input4.value) > Number(input2.value)) {
@@ -101,8 +100,7 @@ submitBtn.onclick = function() {
         renderEror()
         input4.style.border = '2px solid red'
         input4.focus()
-        resultElement.textContent = 'Ошибка! Праздничных смен не может быть больше!'
-        resultElementSubtitle.textContent = ''
+        resultElementSubtitle.textContent = 'Ошибка! Праздничных смен не может быть больше!'
     }
     
     else { renderBlock() } 
@@ -118,37 +116,57 @@ cleanInput.onclick = function() {
     input4.value = ''
     
     resultElement.textContent = ''
-    resultElement.style.color = ('#333333')
     
     resultElementClean.textContent = ''
-    resultElementClean.style.color = ('#333333')
     
     resultElementNal.textContent = ''
-    resultElementNal.style.color = ('#333333')
     
     renderInput()
 }
 
 function renderBlock() {
-    resultElement.style.color = ('#1668e3')
-    resultElementClean.style.color = ('#1668e3')
-    resultElementNal.style.color = ('#1668e3')
-        
-    renderInput()
     
-    resultElementSubtitle.textContent = 'Размер зарплаты:'
-    resultElementClean.textContent = 'Чистыми: ' + sumClean.toFixed(2) + ' ₽'
-    resultElement.textContent = 'До вычета налога: ' + sum.toFixed(2) + ' ₽'
-    resultElementNal.textContent = 'Сумма налога: ' + sumNal.toFixed(2) + ' ₽'
+    resultElementSubtitle.innerHTML = 'Размер зарплаты:'
+    
+    resultElementCleanHTML = sumClean.toLocaleString('ru-RU', {
+        minimumFractionDigits: 0,      
+        maximumFractionDigits: 2,
+    })
+    
+    resultElementHTML = sum.toLocaleString('ru-RU', {
+        minimumFractionDigits: 0,      
+        maximumFractionDigits: 2,
+    })
+    
+    resultElementNalHTML = sumNal.toLocaleString('ru-RU', {
+        minimumFractionDigits: 0,      
+        maximumFractionDigits: 2,
+    })
+    
+    resultEl.forEach( function (item) {
+        item.style.color = '#333333'
+        item.style.fontWeight = '700'
+    })
+    
+    resultElementSubtitle.style.color = '#333333' // <span style="color: blue; font-weight: bold;">${resultElementCleanHTML}</span>
+    
+    resultEl[0].innerHTML = `Чистыми: <span style="color: #1668e3;">${resultElementCleanHTML} ₽</span>`
+    
+    resultEl[1].innerHTML = `До вычета налога: <span style="color: #1668e3;">${resultElementHTML} ₽</span>` 
+    
+    resultEl[2].innerHTML = `Сумма налога: <span style="color: #1668e3;">${resultElementNalHTML} ₽</span>`
+   
+    renderInput() 
 }
 
 function renderEror() {
-    resultElement.style.color = ('red')
-    resultElementClean.style.color = ('red')
-    resultElement.textContent = 'Ошибка! Заполните все обязательные поля!'
-    resultElementClean.textContent = ''
-    resultElementNal.textContent = ''
-    resultElementSubtitle.textContent = ''
+    
+    resultEl.forEach( function (item) {
+        item.innerHTML = ''
+    })
+    
+    resultElementSubtitle.style.color = 'red'
+    resultElementSubtitle.textContent = 'Ошибка! Заполните все обязательные поля!'   
 }
 
 function renderInput() {
