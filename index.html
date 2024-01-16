@@ -8,22 +8,22 @@
 </head>
 <body>
     <h1 class="title">Калькулятор зарплаты САПТ</h1>
-    <div class="calculator">
+    <div class="calculator" id="calculator">
         <div class="calculator__item">
             <label for="input1">Какой у вас тариф?<span>*</span></label>
-            <input type="number" class="form-control" placeholder="0" id="input1">
+            <input type="number" class="form-control" placeholder="0" id="input1" data-type="input1">
         </div>
         <div class="calculator__item">
             <label for="input2">Кол-во всех смен<span>*</span></label>
-            <input type="number" class="form-control" placeholder="0" id="input2">
+            <input type="number" class="form-control" placeholder="0" id="input2" data-type="input2">
         </div>
         <div class="calculator__item">
             <label for="input3">Кол-во ночных смен</label>
-            <input type="number" class="form-control" placeholder="0" id="input3">
+            <input type="number" class="form-control" placeholder="0" id="input3" data-type="input3">
         </div>
         <div class="calculator__item">
             <label for="input4">Кол-во праздничных смен</label>
-            <input type="number" class="form-control" placeholder="0" id="input4">
+            <input type="number" class="form-control" placeholder="0" id="input4" data-type="input4">
         </div>
         <div class="buttons">
             <button class="btn" id="submit">Вычислить</button>

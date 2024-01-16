@@ -1,45 +1,32 @@
-const input1 = document.querySelector('#input1')
-const input2 = document.querySelector('#input2')
-const input3 = document.querySelector('#input3')
-const input4 = document.querySelector('#input4')
+const calculatorElem = document.getElementById('calculator')
 
-const submitBtn = document.querySelector('#submit')
-const cleanInput = document.querySelector('#clean')
+const input1 = document.getElementById('input1')
+const input2 = document.getElementById('input2')
+const input3 = document.getElementById('input3')
+const input4 = document.getElementById('input4')
 
-const blockResult = document.querySelector('#block--result')
-const resultElement = document.querySelector('#result')
-const resultElementClean = document.querySelector('#result-clean')
-const resultElementNal = document.querySelector('#result-nal')
-const resultElementSubtitle = document.querySelector('#result-subtitle')
+const submitBtn = document.getElementById('submit')
+const cleanInput = document.getElementById('clean')
+
+const blockResult = document.getElementById('block--result')
+const resultElement = document.getElementById('result')
+const resultElementClean = document.getElementById('result-clean')
+const resultElementNal = document.getElementById('result-nal')
+const resultElementSubtitle = document.getElementById('result-subtitle')
 const resultEl = document.querySelectorAll('.resultat')
 
 let sum
 let sumClean
 let sumNal
 
-input1.addEventListener('input', function () {
-    if (Number(input1.value) < 0) {
-        input1.value = 0
-    }
+calculatorElem.addEventListener('input', (e) => {     
+    if (e.target.dataset.type === "input1") {examinationInput(e)}    
+    if (e.target.dataset.type === "input2") {examinationInput(e)}  
+    if (e.target.dataset.type === "input3") {examinationInput(e)}   
+    if (e.target.dataset.type === "input4") {examinationInput(e)}
 })
 
-input2.addEventListener('input', function () {
-    if (Number(input2.value) < 0) {
-        input2.value = 0
-    }
-})
-
-input3.addEventListener('input', function () {
-    if (Number(input3.value) < 0) {
-        input3.value = 0
-    }
-})
-
-input4.addEventListener('input', function () {
-    if (Number(input4.value) < 0) {
-        input4.value = 0
-    }
-})
+function examinationInput(e) { return Number(e.target.value) < 0 ? e.target.value = 0 : e.target.value }
 
 submitBtn.onclick = function() {
     
@@ -84,7 +71,7 @@ submitBtn.onclick = function() {
         input3.style.border = '2px solid red'
         input4.style.border = '2px solid red'
         input3.focus()
-        resultElementSubtitle.textContent = 'Ошибка! Ночных и праздничных смен не может быть больше!'
+        resultElementSubtitle.innerHTML = 'Ошибка! Ночных и праздничных смен не может быть больше!'
     }
     
     else if (Number(input3.value) > Number(input2.value)) {
@@ -92,7 +79,7 @@ submitBtn.onclick = function() {
         renderEror()
         input3.style.border = '2px solid red'
         input3.focus()
-        resultElementSubtitle.textContent = 'Ошибка! Ночных смен не может быть больше!'
+        resultElementSubtitle.innerHTML = 'Ошибка! Ночных смен не может быть больше!'
     }
     
     else if (Number(input4.value) > Number(input2.value)) {
@@ -100,7 +87,7 @@ submitBtn.onclick = function() {
         renderEror()
         input4.style.border = '2px solid red'
         input4.focus()
-        resultElementSubtitle.textContent = 'Ошибка! Праздничных смен не может быть больше!'
+        resultElementSubtitle.innerHTML = 'Ошибка! Праздничных смен не может быть больше!'
     }
     
     else { renderBlock() } 
@@ -115,11 +102,11 @@ cleanInput.onclick = function() {
     input3.value = ''
     input4.value = ''
     
-    resultElement.textContent = ''
+    resultElement.innerHTML = ''
     
-    resultElementClean.textContent = ''
+    resultElementClean.innerHTML = ''
     
-    resultElementNal.textContent = ''
+    resultElementNal.innerHTML = ''
     
     renderInput()
 }
@@ -148,7 +135,7 @@ function renderBlock() {
         item.style.fontWeight = '700'
     })
     
-    resultElementSubtitle.style.color = '#333333' // <span style="color: blue; font-weight: bold;">${resultElementCleanHTML}</span>
+    resultElementSubtitle.style.color = '#333333'
     
     resultEl[0].innerHTML = `Чистыми: <span style="color: #1668e3;">${resultElementCleanHTML}</span> ₽`
     
@@ -166,7 +153,7 @@ function renderEror() {
     })
     
     resultElementSubtitle.style.color = 'red'
-    resultElementSubtitle.textContent = 'Ошибка! Заполните все обязательные поля!'   
+    resultElementSubtitle.innerHTML = 'Ошибка! Заполните все обязательные поля!'   
 }
 
 function renderInput() {
