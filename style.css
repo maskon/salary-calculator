@@ -89,6 +89,7 @@ body {
     top: 3px;
     right: -12px;
     color: red;
+    font-weight: 700;
 }
 
 .form-control {
@@ -169,21 +170,27 @@ input::-moz-placeholder {
 
 .resultat {
     font-size: 20px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.result-sp {
+    color: #1668e3;
+    font-weight: 400;
+}
+
+.result-sp-fs {
+    font-size: 34px;
 }
 
 
 @media (max-width: 457px) {
     .title {
         font-size: 20px;
+        padding: 15px 10px;
     }
     
     .form-control {
         width: 100px;
-    }
-    
-    .subtitle {
-        font-size: 18px;
     }
     
     .resultat {

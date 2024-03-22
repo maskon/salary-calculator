@@ -113,7 +113,7 @@ cleanInput.onclick = function() {
 
 function renderBlock() {
     
-    resultElementSubtitle.innerHTML = 'Размер зарплаты:'
+    resultElementSubtitle.innerHTML = 'Размер з/п за вычетом НДФЛ:'
     
     resultElementCleanHTML = sumClean.toLocaleString('ru-RU', {
         minimumFractionDigits: 0,      
@@ -137,11 +137,11 @@ function renderBlock() {
     
     resultElementSubtitle.style.color = '#333333'
     
-    resultEl[0].innerHTML = `Чистыми: <span style="color: #1668e3;">${resultElementCleanHTML}</span> ₽`
+    resultEl[0].innerHTML = `<span class="result-sp result-sp-fs" style="color: #1668e3;">${resultElementCleanHTML} ₽</span>`
     
-    resultEl[1].innerHTML = `До вычета налога: <span style="color: #1668e3;">${resultElementHTML}</span> ₽` 
+    resultEl[1].innerHTML = `Начисленная сумма зарплаты: <span class="result-sp">${resultElementHTML} ₽</span>` 
     
-    resultEl[2].innerHTML = `Сумма налога: <span style="color: #1668e3;">${resultElementNalHTML}</span> ₽`
+    resultEl[2].innerHTML = `Сумма налога: <span class="result-sp">${resultElementNalHTML} ₽</span>`
    
     renderInput() 
 }
