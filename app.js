@@ -41,7 +41,7 @@ submitBtn.onclick = function() {
     const sum7 = sum5 + sum6
     const sum8 = sum2 + Number(input3.value)
     const sum9 = sum8 * 40
-    const sum10 = sum1 / 2 * Number(input4.value)
+    const sum10 = Number(input4.value) * sum1 //sum1 / 2 * Number(input4.value)
     
     sum = sum3 + sum7 + sum9 + sum10
 
