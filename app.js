@@ -4,6 +4,7 @@ const input1 = document.getElementById('input1')
 const input2 = document.getElementById('input2')
 const input3 = document.getElementById('input3')
 const input4 = document.getElementById('input4')
+const input5 = document.getElementById('input5')
 
 const submitBtn = document.getElementById('submit')
 const cleanInput = document.getElementById('clean')
@@ -13,6 +14,7 @@ const resultElement = document.getElementById('result')
 const resultElementClean = document.getElementById('result-clean')
 const resultElementNal = document.getElementById('result-nal')
 const resultElementSubtitle = document.getElementById('result-subtitle')
+// const resultElementNight = document.getElementById('result-night')
 const resultEl = document.querySelectorAll('.resultat')
 
 let sum
@@ -24,6 +26,7 @@ calculatorElem.addEventListener('input', (e) => {
     if (e.target.dataset.type === "input2") {examinationInput(e)}  
     if (e.target.dataset.type === "input3") {examinationInput(e)}   
     if (e.target.dataset.type === "input4") {examinationInput(e)}
+    if (e.target.dataset.type === "input5") {examinationInput(e)}
 })
 
 function examinationInput(e) { return Number(e.target.value) < 0 ? e.target.value = 0 : e.target.value }
@@ -42,13 +45,15 @@ submitBtn.onclick = function() {
     const sum8 = sum2 + Number(input3.value)
     const sum9 = sum8 * 40
     const sum10 = Number(input4.value) * sum1 //sum1 / 2 * Number(input4.value)
+    const sum11 = sum1 / 2 * Number(input5.value)
     
-    sum = sum3 + sum7 + sum9 + sum10
+    sum = sum3 + sum7 + sum9 + sum10 + sum11
 
     const sumPercent = sum / 100 * 13
     
     sumClean = sum - sumPercent
     sumNal = sum - sumClean
+    sumNight = sum4
     
     if (input1.value === '' || input2.value === '') {
         renderBlock()
@@ -89,6 +94,14 @@ submitBtn.onclick = function() {
         input4.focus()
         resultElementSubtitle.innerHTML = 'Ошибка! Праздничных смен не может быть больше!'
     }
+
+    else if (Number(input5.value) > Number(input2.value)) {
+        renderBlock()
+        renderEror()
+        input5.style.border = '2px solid red'
+        input5.focus()
+        resultElementSubtitle.innerHTML = 'Ошибка! Выходных смен не может быть больше!'
+    }
     
     else { renderBlock() } 
 }
@@ -101,6 +114,7 @@ cleanInput.onclick = function() {
     input2.value = ''
     input3.value = ''
     input4.value = ''
+    input5.value = ''
     
     resultElement.innerHTML = ''
     
@@ -161,6 +175,7 @@ function renderInput() {
     input2.style.border = '1px solid #b9c0c5'
     input3.style.border = '1px solid #b9c0c5'
     input4.style.border = '1px solid #b9c0c5'
+    input5.style.border = '1px solid #b9c0c5'
 }
 
 
