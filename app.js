@@ -14,12 +14,14 @@ const resultElement = document.getElementById('result')
 const resultElementClean = document.getElementById('result-clean')
 const resultElementNal = document.getElementById('result-nal')
 const resultElementSubtitle = document.getElementById('result-subtitle')
-// const resultElementNight = document.getElementById('result-night')
+const resultElementNight = document.getElementById('result-night')
+const resultElementMilk = document.getElementById('result-milk')
 const resultEl = document.querySelectorAll('.resultat')
 
 let sum
 let sumClean
 let sumNal
+let sumNight
 
 calculatorElem.addEventListener('input', (e) => {     
     if (e.target.dataset.type === "input1") {examinationInput(e)}    
@@ -35,25 +37,26 @@ submitBtn.onclick = function() {
     
     blockResult.style.display = 'block'
 
-    const sum1 = Number(input1.value) * 8
-    const sum2 = Number(input2.value) - Number(input3.value)
-    const sum3 = sum1 * sum2
-    const sum4 = sum1 / 100 * 40
-    const sum5 = sum4 * Number(input3.value)
-    const sum6 = sum1 * Number(input3.value)
-    const sum7 = sum5 + sum6
-    const sum8 = sum2 + Number(input3.value)
-    const sum9 = sum8 * 40
-    const sum10 = Number(input4.value) * sum1 //sum1 / 2 * Number(input4.value)
-    const sum11 = sum1 / 2 * Number(input5.value)
+    const rate = Number(input1.value) * 8
+    const dayShifts = Number(input2.value) - Number(input3.value)
+    const moneyDays = rate * dayShifts
+    const rateNight = rate / 100 * 40
+    const moneyRateNight = rateNight * Number(input3.value)
+    const moneyNight = rate * Number(input3.value)
+    const monye = moneyRateNight + moneyNight
+    const allShifts = dayShifts + Number(input3.value)
+    const moneyMilk = allShifts * 40
+    const monyeHolliday = Number(input4.value) * rate
+    const moneyWeekend = rate / 2 * Number(input5.value)
     
-    sum = sum3 + sum7 + sum9 + sum10 + sum11
+    sum = moneyDays + monye + moneyMilk + monyeHolliday + moneyWeekend
 
     const sumPercent = sum / 100 * 13
     
     sumClean = sum - sumPercent
     sumNal = sum - sumClean
-    sumNight = sum4
+    sumNight = moneyRateNight
+    sumMilk = moneyMilk
     
     if (input1.value === '' || input2.value === '') {
         renderBlock()
@@ -129,17 +132,27 @@ function renderBlock() {
     
     resultElementSubtitle.innerHTML = 'Размер з/п за вычетом НДФЛ:'
     
-    resultElementCleanHTML = sumClean.toLocaleString('ru-RU', {
+    resultCleanHTML = sumClean.toLocaleString('ru-RU', {
         minimumFractionDigits: 0,      
         maximumFractionDigits: 2,
     })
     
-    resultElementHTML = sum.toLocaleString('ru-RU', {
+    resultSumHTML = sum.toLocaleString('ru-RU', {
         minimumFractionDigits: 0,      
         maximumFractionDigits: 2,
     })
     
-    resultElementNalHTML = sumNal.toLocaleString('ru-RU', {
+    resultNalHTML = sumNal.toLocaleString('ru-RU', {
+        minimumFractionDigits: 0,      
+        maximumFractionDigits: 2,
+    })
+
+    resultMilkHTML = sumMilk.toLocaleString('ru-RU', {
+        minimumFractionDigits: 0,      
+        maximumFractionDigits: 2,
+    })
+
+    resultNightHTML = sumNight.toLocaleString('ru-RU', {
         minimumFractionDigits: 0,      
         maximumFractionDigits: 2,
     })
@@ -151,11 +164,11 @@ function renderBlock() {
     
     resultElementSubtitle.style.color = '#333333'
     
-    resultEl[0].innerHTML = `<span class="result-sp result-sp-fs" style="color: #1668e3;">${resultElementCleanHTML} ₽</span>`
-    
-    resultEl[1].innerHTML = `Начисленная сумма зарплаты: <span class="result-sp">${resultElementHTML} ₽</span>` 
-    
-    resultEl[2].innerHTML = `Сумма налога: <span class="result-sp">${resultElementNalHTML} ₽</span>`
+    resultEl[0].innerHTML = `<span class="result-sp result-sp-fs" style="color: #1668e3;">${resultCleanHTML} ₽</span>`
+    resultEl[1].innerHTML = `Начисленная сумма зарплаты: <span class="result-sp">${resultSumHTML} ₽</span>`
+    resultEl[2].innerHTML = `Ночные: <span class="result-sp">${resultNightHTML} ₽</span>`
+    resultEl[3].innerHTML = `Компенсация молока: <span class="result-sp">${resultMilkHTML} ₽</span>`
+    resultEl[4].innerHTML = `Сумма налога: <span class="result-sp">${resultNalHTML} ₽</span>`
    
     renderInput() 
 }
