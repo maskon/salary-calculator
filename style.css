@@ -158,14 +158,28 @@ input::-moz-placeholder {
     display: none;
     background-color: #ffdeae;
     margin: 0 -10px;
+    margin-bottom: 40px;
     padding: 15px;
     overflow: hidden;
 }
 
+.res-bl {
+    margin-bottom: 12px;
+}
+
+.fl {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 18px;
+    margin-bottom: 3px;
+}
+
 .subtitle {
+    color: #333333;
     font-size: 24px;
     font-weight: 700;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .resultat {
@@ -182,19 +196,45 @@ input::-moz-placeholder {
     font-size: 34px;
 }
 
+.mb {
+    margin-bottom: 10px;
+}
+
 
 @media (max-width: 457px) {
+
+    .calculator {
+        padding: 10px 8px;
+    }
+
     .title {
         font-size: 20px;
         padding: 15px 10px;
     }
-    
+
+    .calculator__item {
+        font-size: 17px;
+        margin-bottom: 6px;
+    }
+
+    .text {
+        padding: 10px 8px;
+    }
+ 
     .form-control {
         width: 100px;
     }
     
     .resultat {
         font-size: 18px;
+    }
+
+    .fl label {
+        font-size: 16px;
+    }
+
+    .mb {
+        margin-bottom: 8px;
     }
 
 }
