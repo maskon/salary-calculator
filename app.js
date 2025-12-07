@@ -48,7 +48,11 @@ submitBtn.onclick = function() {
         input3.style.border = '2px solid red'
         input4.style.border = '2px solid red'
         input3.focus()
-        blockResult.innerHTML = 'Ночных и праздничных смен не может быть больше!'
+        blockResult.innerHTML = `
+            <div class="fl">
+                <img src="img/dialog-error.svg" alt="error" width="20px">
+                <span>Ночных и праздничных смен не может быть больше!</span>
+            </div>`
         return
     }
     
@@ -56,7 +60,11 @@ submitBtn.onclick = function() {
         renderEror()
         input3.style.border = '2px solid red'
         input3.focus()
-        blockResult.innerHTML = 'Ночных смен не может быть больше!'
+        blockResult.innerHTML = `
+            <div class="fl"">
+                <img src="img/dialog-error.svg" alt="error" width="20px">
+                <span>Ночных смен не может быть больше!</span>
+            </div>`
         return
     }
     
@@ -64,7 +72,11 @@ submitBtn.onclick = function() {
         renderEror()
         input4.style.border = '2px solid red'
         input4.focus()
-        blockResult.innerHTML = 'Праздничных смен не может быть больше!'
+        blockResult.innerHTML = `
+            <div class="fl">
+                <img src="img/dialog-error.svg" alt="error" width="20px">
+                <span>Праздничных смен не может быть больше!</span>
+            </div>`
         return
     }
 
@@ -72,7 +84,11 @@ submitBtn.onclick = function() {
         renderEror()
         input5.style.border = '2px solid red'
         input5.focus()
-        blockResult.innerHTML = 'Выходных смен не может быть больше!'
+        blockResult.innerHTML = `
+            <div class="fl">
+                <img src="img/dialog-error.svg" alt="error" width="20px">
+                <span>Выходных смен не может быть больше!</span>
+            </div>`
         return
     }
     
@@ -157,7 +173,11 @@ function renderBlock() {
 
 function renderEror() {    
     blockResult.style.color = 'red'
-    blockResult.innerHTML = 'Заполните все обязательные поля!'   
+    blockResult.innerHTML = `
+        <div class="fl">
+            <img src="img/dialog-error.svg" alt="error" width="20px">
+            <span>Заполните все обязательные поля!</span>
+        </div>`
 }
 
 function renderInput() {
