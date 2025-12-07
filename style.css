@@ -196,6 +196,9 @@ input::-moz-placeholder {
 }
 
 .result-sp-fs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     color: #1668e3;
     font-size: 34px;
     font-weight: 400;

@@ -119,7 +119,7 @@ function renderBlock() {
                 <span>Размер зарплаты:</span>
             </div>
             <div class="result-sp-fs">
-                <img src="img/piggy-bank.svg" alt="piggy-bank" width="30px">
+                <img src="img/piggy-bank.svg" alt="piggy-bank" width="28px">
                 <span>${sumClean.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 2 })} ₽</span>
             </div>
         </div>
