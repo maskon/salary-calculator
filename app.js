@@ -8,7 +8,7 @@ const submitBtn = document.getElementById('submit')
 const cleanInput = document.getElementById('clean')
 const blockResult = document.getElementById('block--result')
 
-let sum, sumClean, sumNal, sumNight, sumMilk, sumWeekend
+let sum, sumSalary, sumClean, sumNal, sumNight, sumMilk, sumWeekend, sumHarmfulConditions, sumSalaryPercent
 
 calculatorElem.addEventListener('input', (e) => {     
     if (/^input[1-5]$/.test(e.target.dataset.type)) {
@@ -95,6 +95,9 @@ submitBtn.onclick = function() {
     sumNight = moneyRateNight
     sumMilk = moneyMilk
     sumWeekend = moneyWeekend
+    sumSalary = sum - sumNight - sumMilk - sumWeekend
+    sumHarmfulConditions = sumSalary / 100 * 4
+    sumSalaryPercent = sumSalary - sumHarmfulConditions
     
     renderBlock()
 }
@@ -111,12 +114,22 @@ function renderBlock() {
     
     blockResult.innerHTML = `
         <div class="mb">
-            <p class="subtitle">Размер зарплаты:</p>
-            <p class="result-sp result-sp-fs" style="color: #1668e3;">${sumClean.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 2 })} ₽</p>
+            <div class="subtitle">
+                <img src="img/money-bag.svg" alt="money-bag" width="22px">
+                <span>Размер зарплаты:</span>
+            </div>
+            <div class="result-sp-fs">
+                <img src="img/piggy-bank.svg" alt="piggy-bank" width="30px">
+                <span>${sumClean.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 2 })} ₽</span>
+            </div>
         </div>
         <div class="fl">
             <img src="img/earnings.svg" alt="earnings" width="20px"> Начисленная сумма: 
             <span class="result-sp">${sum.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 2 })} ₽</span>
+        </div>
+        <div class="fl">
+            <img src="img/briefcase.svg" alt="briefcase" width="20px"> Оклад: 
+            <span class="result-sp">${sumSalaryPercent.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 2 })} ₽</span>
         </div>
         <div class="fl">
             <img src="img/weather-few-clouds-night.svg" alt="night" width="20px"> Ночные: 
@@ -129,6 +142,10 @@ function renderBlock() {
         <div class="fl">
             <img src="img/milk-carton.svg" alt="milk" width="20px"> Компенсация молока: 
             <span class="result-sp">${sumMilk.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 2 })} ₽</span>
+        </div>
+        <div class="fl">
+            <img src="img/hazard.svg" alt="hazard" width="20px"> Вредные условия: 
+            <span class="result-sp">${sumHarmfulConditions.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 2 })} ₽</span>
         </div>
         <div class="fl">
             <img src="img/tax.svg" alt="nalog" width="20px"> Сумма налога: 

@@ -176,6 +176,9 @@ input::-moz-placeholder {
 }
 
 .subtitle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     color: #333333;
     font-size: 24px;
     font-weight: 700;
@@ -193,7 +196,9 @@ input::-moz-placeholder {
 }
 
 .result-sp-fs {
+    color: #1668e3;
     font-size: 34px;
+    font-weight: 400;
 }
 
 .mb {
