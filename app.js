@@ -43,7 +43,21 @@ submitBtn.onclick = function() {
     const input4Val = Number(input4.value)
     const input5Val = Number(input5.value)
 
-    if (input3Val > input2Val && input4Val > input2Val) {
+    if (input3Val > input2Val && input4Val > input2Val && input5Val > input2Val) {
+        renderEror()
+        input3.style.border = '2px solid red'
+        input4.style.border = '2px solid red'
+        input5.style.border = '2px solid red'
+        input3.focus()
+        blockResult.innerHTML = `
+            <div class="fl">
+                <img src="img/dialog-error.svg" alt="error" width="20px">
+                <span>Ночных, праздничных и выходных смен не может быть больше!</span>
+            </div>`
+        return
+    }
+
+    else if (input3Val > input2Val && input4Val > input2Val) {
         renderEror()
         input3.style.border = '2px solid red'
         input4.style.border = '2px solid red'
@@ -55,7 +69,20 @@ submitBtn.onclick = function() {
             </div>`
         return
     }
-    
+
+    else if (input3Val > input2Val && input5Val > input2Val) {
+        renderEror()
+        input3.style.border = '2px solid red'
+        input5.style.border = '2px solid red'
+        input3.focus()
+        blockResult.innerHTML = `
+            <div class="fl">
+                <img src="img/dialog-error.svg" alt="error" width="20px">
+                <span>Ночных и выходных смен не может быть больше!</span>
+            </div>`
+        return
+    }
+
     else if (input3Val > input2Val) {
         renderEror()
         input3.style.border = '2px solid red'
@@ -64,6 +91,19 @@ submitBtn.onclick = function() {
             <div class="fl"">
                 <img src="img/dialog-error.svg" alt="error" width="20px">
                 <span>Ночных смен не может быть больше!</span>
+            </div>`
+        return
+    }
+
+    else if (input4Val > input2Val && input5Val > input2Val) {
+        renderEror()
+        input4.style.border = '2px solid red'
+        input5.style.border = '2px solid red'
+        input4.focus()
+        blockResult.innerHTML = `
+            <div class="fl">
+                <img src="img/dialog-error.svg" alt="error" width="20px">
+                <span>Праздничных и выходных смен не может быть больше!</span>
             </div>`
         return
     }
@@ -105,7 +145,7 @@ submitBtn.onclick = function() {
     const moneyWeekend = rate / 2 * Number(input5.value)
     
     sum = moneyDays + monye + moneyMilk + monyeHolliday + moneyWeekend
-    const sumPercent = sum / 100 * 13
+    const sumPercent = (sum - moneyMilk) / 100 * 13
     sumClean = sum - sumPercent
     sumNal = sum - sumClean
     sumNight = moneyRateNight
