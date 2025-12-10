@@ -86,6 +86,22 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Fallback для скрытия лоадера если JS сломался
+        window.addEventListener('error', function(e) {
+            console.error('Ошибка JS:', e);
+            const loader = document.getElementById('pwa-loader');
+            const appContent = document.getElementById('app-content');
+            
+            if (loader && loader.style.display !== 'none') {
+                setTimeout(function() {
+                    if (loader) loader.style.display = 'none';
+                    if (appContent) appContent.style.display = 'block';
+                }, 1000);
+            }
+        });
+    </script>
     
     <!-- Yandex.Metrika counter -->
 <script type="text/javascript" >

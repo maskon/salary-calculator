@@ -2,6 +2,21 @@
 (function() {
     'use strict';
     
+    // Определяем базовый путь для GitHub Pages
+    function getBasePath() {
+        const currentPath = window.location.pathname;
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        
+        if (isGitHubPages) {
+            // Извлекаем имя репозитория из пути
+            const pathParts = currentPath.split('/');
+            if (pathParts.length > 2) {
+                return '/' + pathParts[1] + '/';
+            }
+        }
+        return '/';
+    }
+    
     // Ждем полной загрузки DOM
     document.addEventListener('DOMContentLoaded', function() {
         const appContent = document.getElementById('app-content');
@@ -11,12 +26,52 @@
         // Проверяем, установлено ли приложение как PWA
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isGitHubPages = window.location.hostname.includes('github.io');
         
         console.log('Режим запуска:', {
             isPWA: isStandalone,
             isMobile: isMobile,
-            displayMode: isStandalone ? 'standalone' : 'browser'
+            isGitHubPages: isGitHubPages,
+            displayMode: isStandalone ? 'standalone' : 'browser',
+            path: window.location.pathname
         });
+        
+        // Функция скрытия лоадера
+        function hideLoader() {
+            if (!loader) {
+                console.error('Лоадер не найден!');
+                return;
+            }
+            
+            // Плавно скрываем лоадер
+            loader.style.opacity = '0';
+            
+            // Показываем контент
+            setTimeout(function() {
+                loader.style.display = 'none';
+                
+                if (appContent) {
+                    appContent.style.display = 'block';
+                    setTimeout(function() {
+                        appContent.classList.add('show');
+                        appContent.classList.add('content-fade-in');
+                    }, 50);
+                }
+                
+                document.body.classList.add('pwa-loaded');
+                console.log('Лоадер скрыт, контент показан');
+            }, 300);
+        }
+        
+        // Функция принудительного скрытия лоадера через таймаут
+        function forceHideLoader(timeout) {
+            setTimeout(function() {
+                if (loader && loader.style.display !== 'none') {
+                    console.warn('Принудительное скрытие лоадера');
+                    hideLoader();
+                }
+            }, timeout);
+        }
         
         // Сообщения для лоадера
         const messages = {
@@ -47,7 +102,7 @@
             }
         }
         
-        // Запускаем смену сообщений
+        // Запускаем смену сообщений если есть элемент
         if (loaderMessage) {
             messageInterval = setInterval(updateLoaderMessage, 800);
         }
@@ -55,130 +110,71 @@
         // Определяем время показа лоадера
         let loaderTime;
         if (isStandalone) {
-            // Для PWA показываем дольше (лучший UX)
             loaderTime = 2500;
-            if (loaderMessage) {
-                loaderMessage.textContent = 'Запуск приложения...';
-            }
         } else if (isMobile) {
-            // Для мобильного браузера
             loaderTime = 1500;
         } else {
-            // Для десктопа
             loaderTime = 800;
         }
         
-        // Скрываем лоадер через заданное время
-        setTimeout(function() {
-            // Плавно скрываем лоадер
-            if (loader) {
-                loader.style.opacity = '0';
-            }
-            
-            // Показываем контент
-            setTimeout(function() {
-                if (loader) {
-                    loader.style.display = 'none';
-                }
-                if (appContent) {
-                    appContent.style.display = 'block';
-                    // Небольшая задержка для плавности
-                    setTimeout(function() {
-                        appContent.classList.add('show');
-                        appContent.classList.add('content-fade-in');
-                    }, 50);
-                }
-                
-                // Добавляем класс для скрытия лоадера в CSS
-                document.body.classList.add('pwa-loaded');
-                
-                // Очищаем интервал сообщений
-                clearInterval(messageInterval);
-                
-                // Логируем завершение загрузки
-                console.log('Приложение загружено');
-            }, 300); // Время анимации исчезновения
-        }, loaderTime);
+        // На GitHub Pages даем больше времени на загрузку ресурсов
+        if (isGitHubPages) {
+            loaderTime += 1000;
+            console.log('GitHub Pages: увеличенное время загрузки');
+        }
+        
+        // Прячем лоадер когда все ресурсы загружены
+        window.addEventListener('load', function() {
+            console.log('Все ресурсы загружены');
+            setTimeout(hideLoader, 500);
+        });
+        
+        // На всякий случай принудительно скрываем через максимум 5 секунд
+        forceHideLoader(5000);
+        
+        // Также скрываем по таймауту (основной способ)
+        setTimeout(hideLoader, loaderTime);
         
         // Сохраняем информацию о первом запуске
         if (!localStorage.getItem('app_first_launch')) {
             localStorage.setItem('app_first_launch', new Date().toISOString());
-            console.log('Первый запуск приложения сохранен');
         }
     });
     
-    // Регистрация Service Worker
+    // Регистрация Service Worker с учетом GitHub Pages
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-            // Используем try/catch для обработки ошибок
-            try {
-                navigator.serviceWorker.register('sw.js')
-                    .then(function(registration) {
-                        console.log('Service Worker успешно зарегистрирован:', registration.scope);
-                    })
-                    .catch(function(error) {
-                        console.log('Ошибка регистрации Service Worker:', error);
-                    });
-            } catch (error) {
-                console.log('Ошибка при попытке регистрации Service Worker:', error);
+            const isGitHubPages = window.location.hostname.includes('github.io');
+            let swPath = 'sw.js';
+            
+            if (isGitHubPages) {
+                // Получаем путь к репозиторию для GitHub Pages
+                const path = window.location.pathname;
+                const pathParts = path.split('/');
+                if (pathParts.length > 2) {
+                    swPath = '/' + pathParts[1] + '/sw.js';
+                }
             }
+            
+            navigator.serviceWorker.register(swPath)
+                .then(function(registration) {
+                    console.log('Service Worker зарегистрирован:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('Ошибка регистрации Service Worker:', error);
+                });
         });
     }
     
-    // Определяем события beforeinstallprompt для PWA
+    // Обработчик для PWA установки
     let deferredPrompt;
     
     window.addEventListener('beforeinstallprompt', (e) => {
-        // Предотвращаем автоматическое отображение подсказки
         e.preventDefault();
-        // Сохраняем событие для использования позже
         deferredPrompt = e;
-        console.log('PWA может быть установлено');
-        
-        // Можно показать свою кнопку установки
-        // showInstallButton();
+        console.log('Доступна установка PWA');
     });
-    
-    // Функция для показа кнопки установки
-    function showInstallButton() {
-        const installBtn = document.createElement('button');
-        installBtn.innerHTML = '📲 Установить приложение';
-        installBtn.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
-            background: #1668e3;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(22, 104, 227, 0.3);
-            z-index: 1000;
-            cursor: pointer;
-        `;
-        
-        installBtn.onclick = async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`Пользователь ${outcome} установку`);
-                if (outcome === 'accepted') {
-                    installBtn.style.display = 'none';
-                }
-                deferredPrompt = null;
-            }
-        };
-        
-        document.body.appendChild(installBtn);
-    }
 })();
-
-// ===== ВАШ ОСТАЛЬНОЙ КОД НИЖЕ =====
-// Весь ваш существующий JavaScript код должен быть здесь
-// Убедитесь, что он начинается после закрывающей скобки выше
 
 const calculatorElem = document.getElementById('calculator')
 const input1 = document.getElementById('input1')
@@ -441,3 +437,18 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+
+setTimeout(function() {
+    const loader = document.getElementById('pwa-loader');
+    const appContent = document.getElementById('app-content');
+    
+    if (loader && loader.style.display !== 'none') {
+        console.warn('Лоадер все еще виден - принудительно скрываем');
+        loader.style.display = 'none';
+    }
+    
+    if (appContent && appContent.style.display !== 'block') {
+        appContent.style.display = 'block';
+        appContent.classList.add('show');
+    }
+}, 10000); // Через 10 секунд точно скрываем
