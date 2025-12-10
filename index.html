@@ -22,6 +22,16 @@
     <link rel="apple-touch-startup-image" href="icon-512x512.png">
     <link rel="stylesheet" href="style.css">
     <title>Калькулятор ЗП АО "САПТ"</title>
+    
+    <script>
+    // Динамически устанавливаем путь к манифесту
+    const manifest = document.createElement('link');
+    manifest.rel = 'manifest';
+    manifest.href = window.location.pathname.includes('github.io') 
+    ? '/salary-calculator/manifest.json' 
+    : '/manifest.json';
+    document.head.appendChild(manifest);
+    </script>
 </head>
 <body>
     <h1 class="title">Калькулятор зарплаты САПТ</h1>
