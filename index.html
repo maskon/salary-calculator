@@ -2,26 +2,21 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-        <!-- Manifest -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Калькулятор ЗП АО "САПТ"</title>
+
     <link rel="manifest" href="manifest.json">
-
-    <!-- Иконка для закладок -->
-    <link rel="icon" href="img/pwa/icon-192x192.png" type="image/png">
-
-    <!-- Обязательные для PWA -->
+    <meta name="theme-color" content="#1668e3">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Калькулятор зарплаты">
 
-    <!-- Viewport для мобильных -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-
-    <!-- Иконки для iOS -->
-    <link rel="apple-touch-icon" href="icon-192x192.png">
-    <link rel="apple-touch-startup-image" href="icon-512x512.png">
     <link rel="stylesheet" href="style.css">
-    <title>Калькулятор ЗП АО "САПТ"</title>
+    
+    <!-- Иконки -->
+    <link rel="apple-touch-icon" href="icon-192x192.png">
     
     <script>
     // Динамически устанавливаем путь к манифесту
@@ -34,48 +29,61 @@
     </script>
 </head>
 <body>
-    <h1 class="title">Калькулятор зарплаты САПТ</h1>
-    <div class="calculator" id="calculator">
-        <div class="calculator__item">
-            <div class="fl">
-                <img src="img/overtime.svg" alt="time" width="22px">
-                <label for="input1">Какой у вас тариф?<span>*</span></label>
+    <div id="pwa-loader">
+        <div class="loader-logo">
+            <!-- SVG логотип или эмодзи -->
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 60px; color: #1668e3;">💰</span>
             </div>
-            <input type="number" class="form-control" placeholder="0" id="input1" data-type="input1">
         </div>
-        <div class="calculator__item">
-            <div class="fl">
-                <img src="img/work.svg" alt="work" width="22px">
-                <label for="input2">Кол-во всех смен<span>*</span></label>
+        <div class="loader-spinner"></div>
+        <div class="loader-text" id="loader-message">Запуск калькулятора...</div>
+    </div>
+
+    <div id="app-content">
+        <h1 class="title">Калькулятор зарплаты САПТ</h1>
+        <div class="calculator" id="calculator">
+            <div class="calculator__item">
+                <div class="fl">
+                    <img src="img/overtime.svg" alt="time" width="22px">
+                    <label for="input1">Какой у вас тариф?<span>*</span></label>
+                </div>
+                <input type="number" class="form-control" placeholder="0" id="input1" data-type="input1">
             </div>
-            <input type="number" class="form-control" placeholder="0" id="input2" data-type="input2">
-        </div>
-        <div class="calculator__item">
-            <div class="fl">
-                <img src="img/night.svg" alt="night" width="22px">
-                <label for="input3">Ночные смены</label>
+            <div class="calculator__item">
+                <div class="fl">
+                    <img src="img/work.svg" alt="work" width="22px">
+                    <label for="input2">Кол-во всех смен<span>*</span></label>
+                </div>
+                <input type="number" class="form-control" placeholder="0" id="input2" data-type="input2">
             </div>
-            <input type="number" class="form-control" placeholder="0" id="input3" data-type="input3">
-        </div>
-        <div class="calculator__item">
-            <div class="fl">
-                <img src="img/gift.svg" alt="gift" width="22px">
-                <label for="input4">Праздничные смены</label>
+            <div class="calculator__item">
+                <div class="fl">
+                    <img src="img/night.svg" alt="night" width="22px">
+                    <label for="input3">Ночные смены</label>
+                </div>
+                <input type="number" class="form-control" placeholder="0" id="input3" data-type="input3">
             </div>
-            <input type="number" class="form-control" placeholder="0" id="input4" data-type="input4">
-        </div>
-        <div class="calculator__item">
-            <div class="fl">
-                <img src="img/house-with-garden.svg" alt="house-with-garden" width="22px">
-                <label for="input5">Выходные смены (переработка)</label>
+            <div class="calculator__item">
+                <div class="fl">
+                    <img src="img/gift.svg" alt="gift" width="22px">
+                    <label for="input4">Праздничные смены</label>
+                </div>
+                <input type="number" class="form-control" placeholder="0" id="input4" data-type="input4">
             </div>
-            <input type="number" class="form-control" placeholder="0" id="input5" data-type="input5">
-        </div>
-        <div class="buttons">
-            <button class="btn" id="submit">Вычислить</button>
-            <button class="btn btn--clear" id="clean">Очистить</button>
-        </div>
-            <div class="text" id="block--result"></div>
+            <div class="calculator__item">
+                <div class="fl">
+                    <img src="img/house-with-garden.svg" alt="house-with-garden" width="22px">
+                    <label for="input5">Выходные смены (переработка)</label>
+                </div>
+                <input type="number" class="form-control" placeholder="0" id="input5" data-type="input5">
+            </div>
+            <div class="buttons">
+                <button class="btn" id="submit">Вычислить</button>
+                <button class="btn btn--clear" id="clean">Очистить</button>
+            </div>
+                <div class="text" id="block--result"></div>
+            </div>
         </div>
     </div>
     

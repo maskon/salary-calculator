@@ -1,3 +1,185 @@
+// ===== PWA ЛОАДЕР ЛОГИКА =====
+(function() {
+    'use strict';
+    
+    // Ждем полной загрузки DOM
+    document.addEventListener('DOMContentLoaded', function() {
+        const appContent = document.getElementById('app-content');
+        const loader = document.getElementById('pwa-loader');
+        const loaderMessage = document.getElementById('loader-message');
+        
+        // Проверяем, установлено ли приложение как PWA
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        console.log('Режим запуска:', {
+            isPWA: isStandalone,
+            isMobile: isMobile,
+            displayMode: isStandalone ? 'standalone' : 'browser'
+        });
+        
+        // Сообщения для лоадера
+        const messages = {
+            pwa: [
+                'Инициализация калькулятора...',
+                'Загрузка данных...',
+                'Почти готово...'
+            ],
+            browser: [
+                'Загрузка...',
+                'Готово!'
+            ]
+        };
+        
+        let messageIndex = 0;
+        let messageInterval;
+        
+        // Функция обновления сообщения
+        function updateLoaderMessage() {
+            if (loaderMessage) {
+                const messageList = isStandalone ? messages.pwa : messages.browser;
+                if (messageIndex < messageList.length) {
+                    loaderMessage.textContent = messageList[messageIndex];
+                    messageIndex++;
+                } else {
+                    clearInterval(messageInterval);
+                }
+            }
+        }
+        
+        // Запускаем смену сообщений
+        if (loaderMessage) {
+            messageInterval = setInterval(updateLoaderMessage, 800);
+        }
+        
+        // Определяем время показа лоадера
+        let loaderTime;
+        if (isStandalone) {
+            // Для PWA показываем дольше (лучший UX)
+            loaderTime = 2500;
+            if (loaderMessage) {
+                loaderMessage.textContent = 'Запуск приложения...';
+            }
+        } else if (isMobile) {
+            // Для мобильного браузера
+            loaderTime = 1500;
+        } else {
+            // Для десктопа
+            loaderTime = 800;
+        }
+        
+        // Скрываем лоадер через заданное время
+        setTimeout(function() {
+            // Плавно скрываем лоадер
+            if (loader) {
+                loader.style.opacity = '0';
+            }
+            
+            // Показываем контент
+            setTimeout(function() {
+                if (loader) {
+                    loader.style.display = 'none';
+                }
+                if (appContent) {
+                    appContent.style.display = 'block';
+                    // Небольшая задержка для плавности
+                    setTimeout(function() {
+                        appContent.classList.add('show');
+                        appContent.classList.add('content-fade-in');
+                    }, 50);
+                }
+                
+                // Добавляем класс для скрытия лоадера в CSS
+                document.body.classList.add('pwa-loaded');
+                
+                // Очищаем интервал сообщений
+                clearInterval(messageInterval);
+                
+                // Логируем завершение загрузки
+                console.log('Приложение загружено');
+            }, 300); // Время анимации исчезновения
+        }, loaderTime);
+        
+        // Сохраняем информацию о первом запуске
+        if (!localStorage.getItem('app_first_launch')) {
+            localStorage.setItem('app_first_launch', new Date().toISOString());
+            console.log('Первый запуск приложения сохранен');
+        }
+    });
+    
+    // Регистрация Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            // Используем try/catch для обработки ошибок
+            try {
+                navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('Service Worker успешно зарегистрирован:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Ошибка регистрации Service Worker:', error);
+                    });
+            } catch (error) {
+                console.log('Ошибка при попытке регистрации Service Worker:', error);
+            }
+        });
+    }
+    
+    // Определяем события beforeinstallprompt для PWA
+    let deferredPrompt;
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Предотвращаем автоматическое отображение подсказки
+        e.preventDefault();
+        // Сохраняем событие для использования позже
+        deferredPrompt = e;
+        console.log('PWA может быть установлено');
+        
+        // Можно показать свою кнопку установки
+        // showInstallButton();
+    });
+    
+    // Функция для показа кнопки установки
+    function showInstallButton() {
+        const installBtn = document.createElement('button');
+        installBtn.innerHTML = '📲 Установить приложение';
+        installBtn.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background: #1668e3;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(22, 104, 227, 0.3);
+            z-index: 1000;
+            cursor: pointer;
+        `;
+        
+        installBtn.onclick = async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`Пользователь ${outcome} установку`);
+                if (outcome === 'accepted') {
+                    installBtn.style.display = 'none';
+                }
+                deferredPrompt = null;
+            }
+        };
+        
+        document.body.appendChild(installBtn);
+    }
+})();
+
+// ===== ВАШ ОСТАЛЬНОЙ КОД НИЖЕ =====
+// Весь ваш существующий JavaScript код должен быть здесь
+// Убедитесь, что он начинается после закрывающей скобки выше
+
 const calculatorElem = document.getElementById('calculator')
 const input1 = document.getElementById('input1')
 const input2 = document.getElementById('input2')
