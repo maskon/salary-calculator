@@ -3,29 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
     <title>Калькулятор ЗП АО "САПТ"</title>
-
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1668e3">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Калькулятор зарплаты">
-
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Иконки -->
+    <link rel="stylesheet" href="style.css">   
     <link rel="apple-touch-icon" href="icon-192x192.png">
     
     <script>
-    // Динамически устанавливаем путь к манифесту
-    const manifest = document.createElement('link');
-    manifest.rel = 'manifest';
-    manifest.href = window.location.pathname.includes('github.io') 
-    ? '/salary-calculator/manifest.json' 
-    : '/manifest.json';
-    document.head.appendChild(manifest);
+        const manifest = document.createElement('link');
+        manifest.rel = 'manifest';
+        manifest.href = window.location.pathname.includes('github.io') 
+        ? '/salary-calculator/manifest.json' 
+        : '/manifest.json';
+        document.head.appendChild(manifest);
     </script>
 </head>
 <body>
@@ -48,35 +42,35 @@
                     <img src="img/overtime.svg" alt="time" width="22px">
                     <label for="input1">Какой у вас тариф?<span>*</span></label>
                 </div>
-                <input type="number" class="form-control" placeholder="0" id="input1" data-type="input1">
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input1" data-type="input1">
             </div>
             <div class="calculator__item">
                 <div class="fl">
                     <img src="img/work.svg" alt="work" width="22px">
                     <label for="input2">Кол-во всех смен<span>*</span></label>
                 </div>
-                <input type="number" class="form-control" placeholder="0" id="input2" data-type="input2">
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input2" data-type="input2">
             </div>
             <div class="calculator__item">
                 <div class="fl">
                     <img src="img/night.svg" alt="night" width="22px">
                     <label for="input3">Ночные смены</label>
                 </div>
-                <input type="number" class="form-control" placeholder="0" id="input3" data-type="input3">
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input3" data-type="input3">
             </div>
             <div class="calculator__item">
                 <div class="fl">
                     <img src="img/gift.svg" alt="gift" width="22px">
                     <label for="input4">Праздничные смены</label>
                 </div>
-                <input type="number" class="form-control" placeholder="0" id="input4" data-type="input4">
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input4" data-type="input4">
             </div>
             <div class="calculator__item">
                 <div class="fl">
                     <img src="img/house-with-garden.svg" alt="house-with-garden" width="22px">
                     <label for="input5">Выходные смены (переработка)</label>
                 </div>
-                <input type="number" class="form-control" placeholder="0" id="input5" data-type="input5">
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input5" data-type="input5">
             </div>
             <div class="buttons">
                 <button class="btn" id="submit">Вычислить</button>

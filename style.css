@@ -96,15 +96,23 @@ body {
     font-size: 18px;
     font-weight: 700;
     padding: 4px;
-    border: 1px solid #b9c0c5;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
+    border: 2px solid #b9c0c5 !important;
     box-sizing: border-box;
     color: #3d9950;
+    transition: border-color 0.2s;
 }
 
 .form-control:focus {
-    border: 2px solid #090980;
+    border-color: #090980 !important;
+    outline: none;
+}
+
+.form-control.error {
+    border-color: red !important;
+}
+
+.form-control.error:focus {
+    border-color: #090980 !important;
 }
 
 input::-webkit-input-placeholder {

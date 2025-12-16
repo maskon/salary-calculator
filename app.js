@@ -1,181 +1,3 @@
-// ===== PWA ЛОАДЕР ЛОГИКА =====
-(function() {
-    'use strict';
-    
-    // Определяем базовый путь для GitHub Pages
-    function getBasePath() {
-        const currentPath = window.location.pathname;
-        const isGitHubPages = window.location.hostname.includes('github.io');
-        
-        if (isGitHubPages) {
-            // Извлекаем имя репозитория из пути
-            const pathParts = currentPath.split('/');
-            if (pathParts.length > 2) {
-                return '/' + pathParts[1] + '/';
-            }
-        }
-        return '/';
-    }
-    
-    // Ждем полной загрузки DOM
-    document.addEventListener('DOMContentLoaded', function() {
-        const appContent = document.getElementById('app-content');
-        const loader = document.getElementById('pwa-loader');
-        const loaderMessage = document.getElementById('loader-message');
-        
-        // Проверяем, установлено ли приложение как PWA
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isGitHubPages = window.location.hostname.includes('github.io');
-        
-        console.log('Режим запуска:', {
-            isPWA: isStandalone,
-            isMobile: isMobile,
-            isGitHubPages: isGitHubPages,
-            displayMode: isStandalone ? 'standalone' : 'browser',
-            path: window.location.pathname
-        });
-        
-        // Функция скрытия лоадера
-        function hideLoader() {
-            if (!loader) {
-                console.error('Лоадер не найден!');
-                return;
-            }
-            
-            // Плавно скрываем лоадер
-            loader.style.opacity = '0';
-            
-            // Показываем контент
-            setTimeout(function() {
-                loader.style.display = 'none';
-                
-                if (appContent) {
-                    appContent.style.display = 'block';
-                    setTimeout(function() {
-                        appContent.classList.add('show');
-                        appContent.classList.add('content-fade-in');
-                    }, 50);
-                }
-                
-                document.body.classList.add('pwa-loaded');
-                console.log('Лоадер скрыт, контент показан');
-            }, 300);
-        }
-        
-        // Функция принудительного скрытия лоадера через таймаут
-        function forceHideLoader(timeout) {
-            setTimeout(function() {
-                if (loader && loader.style.display !== 'none') {
-                    console.warn('Принудительное скрытие лоадера');
-                    hideLoader();
-                }
-            }, timeout);
-        }
-        
-        // Сообщения для лоадера
-        const messages = {
-            pwa: [
-                'Инициализация калькулятора...',
-                'Загрузка данных...',
-                'Почти готово...'
-            ],
-            browser: [
-                'Загрузка...',
-                'Готово!'
-            ]
-        };
-        
-        let messageIndex = 0;
-        let messageInterval;
-        
-        // Функция обновления сообщения
-        function updateLoaderMessage() {
-            if (loaderMessage) {
-                const messageList = isStandalone ? messages.pwa : messages.browser;
-                if (messageIndex < messageList.length) {
-                    loaderMessage.textContent = messageList[messageIndex];
-                    messageIndex++;
-                } else {
-                    clearInterval(messageInterval);
-                }
-            }
-        }
-        
-        // Запускаем смену сообщений если есть элемент
-        if (loaderMessage) {
-            messageInterval = setInterval(updateLoaderMessage, 800);
-        }
-        
-        // Определяем время показа лоадера
-        let loaderTime;
-        if (isStandalone) {
-            loaderTime = 2500;
-        } else if (isMobile) {
-            loaderTime = 1500;
-        } else {
-            loaderTime = 800;
-        }
-        
-        // На GitHub Pages даем больше времени на загрузку ресурсов
-        if (isGitHubPages) {
-            loaderTime += 1000;
-            console.log('GitHub Pages: увеличенное время загрузки');
-        }
-        
-        // Прячем лоадер когда все ресурсы загружены
-        window.addEventListener('load', function() {
-            console.log('Все ресурсы загружены');
-            setTimeout(hideLoader, 500);
-        });
-        
-        // На всякий случай принудительно скрываем через максимум 5 секунд
-        forceHideLoader(5000);
-        
-        // Также скрываем по таймауту (основной способ)
-        setTimeout(hideLoader, loaderTime);
-        
-        // Сохраняем информацию о первом запуске
-        if (!localStorage.getItem('app_first_launch')) {
-            localStorage.setItem('app_first_launch', new Date().toISOString());
-        }
-    });
-    
-    // Регистрация Service Worker с учетом GitHub Pages
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            const isGitHubPages = window.location.hostname.includes('github.io');
-            let swPath = 'sw.js';
-            
-            if (isGitHubPages) {
-                // Получаем путь к репозиторию для GitHub Pages
-                const path = window.location.pathname;
-                const pathParts = path.split('/');
-                if (pathParts.length > 2) {
-                    swPath = '/' + pathParts[1] + '/sw.js';
-                }
-            }
-            
-            navigator.serviceWorker.register(swPath)
-                .then(function(registration) {
-                    console.log('Service Worker зарегистрирован:', registration.scope);
-                })
-                .catch(function(error) {
-                    console.log('Ошибка регистрации Service Worker:', error);
-                });
-        });
-    }
-    
-    // Обработчик для PWA установки
-    let deferredPrompt;
-    
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        console.log('Доступна установка PWA');
-    });
-})();
-
 const calculatorElem = document.getElementById('calculator')
 const input1 = document.getElementById('input1')
 const input2 = document.getElementById('input2')
@@ -200,6 +22,104 @@ const MAX_INPUT_OTHERS = 99
 
 let saveTimeout
 
+;(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        const appContent = document.getElementById('app-content')
+        const loader = document.getElementById('pwa-loader')
+        const loaderMessage = document.getElementById('loader-message')
+        
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        const isGitHubPages = window.location.hostname.includes('github.io')
+        
+        function hideLoader() {
+            if (!loader) return
+            
+            loader.style.opacity = '0'
+            
+            setTimeout(function() {
+                loader.style.display = 'none'
+                
+                if (appContent) {
+                    appContent.style.display = 'block'
+                    setTimeout(function() {
+                        appContent.classList.add('show')
+                        appContent.classList.add('content-fade-in')
+                    }, 50)
+                }
+                
+                document.body.classList.add('pwa-loaded')
+            }, 300)
+        }
+        
+        const messages = {
+            pwa: [
+                'Инициализация калькулятора...',
+                'Загрузка данных...',
+                'Почти готово...'
+            ],
+            browser: [
+                'Загрузка...',
+                'Готово!'
+            ]
+        }
+        
+        let messageIndex = 0
+        let messageInterval
+        
+        function updateLoaderMessage() {
+            if (loaderMessage) {
+                const messageList = isStandalone ? messages.pwa : messages.browser
+                if (messageIndex < messageList.length) {
+                    loaderMessage.textContent = messageList[messageIndex]
+                    messageIndex++
+                } else {
+                    clearInterval(messageInterval)
+                }
+            }
+        }
+        
+        if (loaderMessage) {
+            messageInterval = setInterval(updateLoaderMessage, 800)
+        }
+        
+        let loaderTime
+        if (isStandalone) {
+            loaderTime = 2500
+        } else if (isMobile) {
+            loaderTime = 1500
+        } else {
+            loaderTime = 800
+        }
+        
+        if (isGitHubPages) {
+            loaderTime += 1000
+        }
+        
+        window.addEventListener('load', function() {
+            setTimeout(hideLoader, 500)
+        })
+        
+        setTimeout(function() {
+            if (loader && loader.style.display !== 'none') {
+                hideLoader()
+            }
+        }, 5000)
+        
+        setTimeout(hideLoader, loaderTime)
+        
+        if (!localStorage.getItem('app_first_launch')) {
+            localStorage.setItem('app_first_launch', new Date().toISOString())
+        }
+    })
+    
+    let deferredPrompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault()
+        deferredPrompt = e
+    })
+})()
+
 const saveInput1 = () => {
     clearTimeout(saveTimeout)
     saveTimeout = setTimeout(() => {
@@ -216,18 +136,20 @@ const clearInput1 = () => localStorage.removeItem(STORAGE_KEY_INPUT1)
 
 window.addEventListener('DOMContentLoaded', loadInput1)
 
-calculatorElem.addEventListener('input', (e) => {     
+calculatorElem.addEventListener('input', (e) => {   
     if (/^input[1-5]$/.test(e.target.dataset.type)) {
-        e.target.style.border = '1px solid #b9c0c5'
         examinationInput(e)
         if (e.target.dataset.type === "input1") saveInput1()
     }
 })
 
-function examinationInput(e) { 
+const examinationInput = (e) => { 
     let value = e.target.value
     
-    if (value === '') return value
+    if (value === '') {
+        e.target.value = ''
+        return ''
+    }
     
     value = value.replace(/[^\d]/g, '')
     
@@ -265,8 +187,8 @@ function examinationInput(e) {
 const getNumberValue = (input) => Number(input.value) || 0
 
 const markError = (input) => {
-    input.style.border = '2px solid red'
-    input.focus()
+    if (!input) return
+    input.classList.add('error')
 }
 
 const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1)
@@ -287,43 +209,52 @@ const formatMoney = (amount) =>
         maximumFractionDigits: 2 
     }) + ' ₽'
 
-submitBtn.onclick = function() {   
-    blockResult.style.display = 'block'
+function calculateSalary() {
     renderInput()
+    
+    if (!validateInputs()) return false
+    
+    const [hourlyRate, totalShifts, nightShifts, holidayShifts, weekendShifts] = 
+        [input1, input2, input3, input4, input5].map(getNumberValue)
+    
+    if (!validateShifts(totalShifts, nightShifts, holidayShifts, weekendShifts)) return false
+    
+    calculateValues(hourlyRate, totalShifts, nightShifts, holidayShifts, weekendShifts)
+    renderBlock()
+    return true
+}
 
+function validateInputs() {
     if (!input1.value.trim() || !input2.value.trim()) {
         showError('заполните все обязательные поля!')
         if (!input2.value.trim()) markError(input2)
         if (!input1.value.trim()) markError(input1)
-        return
+        return false
     }
+    return true
+}
 
-    const [
-        hourlyRate,
-        totalShifts,
-        nightShifts,
-        holidayShifts,
-        weekendShifts
-    ] = [input1, input2, input3, input4, input5].map(getNumberValue)
-
+function validateShifts(total, night, holiday, weekend) {
     const errors = []
     const errorInputs = []
     
-    if (nightShifts > totalShifts) {
+    if (night > total) {
         errorInputs.push(input3)
         errors.push('ночных')
     }
-    if (holidayShifts > totalShifts) {
+    if (holiday > total) {
         errorInputs.push(input4)
         errors.push('праздничных')
     }
-    if (weekendShifts > totalShifts) {
+    if (weekend > total) {
         errorInputs.push(input5)
         errors.push('выходных')
     }
     
     if (errors.length > 0) {
-        errorInputs.forEach(markError)
+        errorInputs.forEach(input => {
+            if (input) markError(input)
+        })
         
         let errorMessage
         if (errors.length === 3) {
@@ -335,9 +266,12 @@ submitBtn.onclick = function() {
         }
         
         showError(errorMessage)
-        return
+        return false
     }
+    return true
+}
 
+function calculateValues(hourlyRate, totalShifts, nightShifts, holidayShifts, weekendShifts) {
     const shiftRate = hourlyRate * HOURS_IN_SHIFT
     const dayShifts = totalShifts - nightShifts
     
@@ -359,15 +293,29 @@ submitBtn.onclick = function() {
     sumSalary = sum - sumNight - sumMilk - sumWeekend
     sumHarmfulConditions = sumSalary * HARMFUL_PERCENT / 100
     sumSalaryPercent = sumSalary - sumHarmfulConditions
-    
-    renderBlock()
 }
 
-cleanInput.onclick = function() {    
+function clearAll() {
     blockResult.style.display = 'none'
-    const _ = [input1, input2, input3, input4, input5].forEach(input => input.value = '')
+    
+    const inputs = [input1, input2, input3, input4, input5]
+    
+    if (!inputs || !Array.isArray(inputs)) {
+        clearInput1()
+        return
+    }
+    
+    inputs.forEach((input, index) => {
+        if (input && typeof input === 'object') {
+            input.value = ''
+            input.classList.remove('error')
+            input.style.border = ''
+        } else {
+            console.warn(`Инпут ${index + 1} не найден:`, input)
+        }
+    })
+    
     clearInput1()
-    renderInput()
 }
 
 function renderBlock() {
@@ -411,44 +359,35 @@ function renderBlock() {
             <img src="img/tax.svg" alt="nalog" width="20px"> Сумма налога: 
             <span class="result-sp">${formatMoney(sumNal)}</span>
         </div>`
-   
-    renderInput() 
-}
-
-function renderEror(message = 'заполните все обязательные поля!') {    
-    showError(message)
 }
 
 function renderInput() {
-    [input1, input2, input3, input4, input5].forEach(input => {
-        input.style.border = '1px solid #b9c0c5'
+    const inputs = [input1, input2, input3, input4, input5]
+    
+    inputs.forEach(input => {
+        if (!input) return
+        input.classList.remove('error')
+        input.style.border = ''
     })
 }
 
-// Регистрация Service Worker для PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => {
-        console.log('Service Worker зарегистрирован:', registration);
-      })
-      .catch(error => {
-        console.log('Ошибка регистрации Service Worker:', error);
-      });
-  });
+submitBtn.onclick = function() {   
+    blockResult.style.display = 'block'
+    calculateSalary()
 }
 
+cleanInput.onclick = clearAll
+
 setTimeout(function() {
-    const loader = document.getElementById('pwa-loader');
-    const appContent = document.getElementById('app-content');
+    const loader = document.getElementById('pwa-loader')
+    const appContent = document.getElementById('app-content')
     
     if (loader && loader.style.display !== 'none') {
-        console.warn('Лоадер все еще виден - принудительно скрываем');
-        loader.style.display = 'none';
+        loader.style.display = 'none'
     }
     
     if (appContent && appContent.style.display !== 'block') {
-        appContent.style.display = 'block';
-        appContent.classList.add('show');
+        appContent.style.display = 'block'
+        appContent.classList.add('show')
     }
-}, 10000); // Через 10 секунд точно скрываем
+}, 10000)
