@@ -96,23 +96,33 @@ body {
     font-size: 18px;
     font-weight: 700;
     padding: 4px;
-    border: 2px solid #b9c0c5 !important;
+    border: 2px solid #b9c0c5;
     box-sizing: border-box;
     color: #3d9950;
-    transition: border-color 0.2s;
+    transition: all 0.2s ease-in-out;
 }
 
 .form-control:focus {
-    border-color: #090980 !important;
+    border-color: #090980;
     outline: none;
+    box-shadow: 0 0 0 2px rgba(9, 9, 128, 0.2);
+    transform: translateY(-1px);
 }
 
 .form-control.error {
     border-color: red !important;
+    animation: shake 0.3s ease-in-out;
 }
 
 .form-control.error:focus {
     border-color: #090980 !important;
+    box-shadow: 0 0 0 2px rgba(9, 9, 128, 0.2) !important;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
 }
 
 input::-webkit-input-placeholder {

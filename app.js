@@ -140,6 +140,10 @@ calculatorElem.addEventListener('input', (e) => {
     if (/^input[1-5]$/.test(e.target.dataset.type)) {
         examinationInput(e)
         if (e.target.dataset.type === "input1") saveInput1()
+        
+        // Убираем ошибку, так как пользователь начал исправлять
+        e.target.classList.remove('error')
+        e.target.style.border = ''
     }
 })
 
