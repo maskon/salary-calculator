@@ -92,6 +92,7 @@ body {
     font-weight: 700;
 }
 
+/* Добавьте в CSS */
 .form-control {
     font-size: 18px;
     font-weight: 700;
@@ -99,24 +100,51 @@ body {
     border: 2px solid #b9c0c5;
     box-sizing: border-box;
     color: #3d9950;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.3s ease;
 }
 
 .form-control:focus {
     border-color: #090980;
     outline: none;
-    box-shadow: 0 0 0 2px rgba(9, 9, 128, 0.2);
-    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(9, 9, 128, 0.2);
 }
 
 .form-control.error {
     border-color: red !important;
-    animation: shake 0.3s ease-in-out;
+    animation: errorAlert 0.6s ease-in-out;
+}
+
+@keyframes errorAlert {
+    0% {
+        transform: translateX(0);
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+    }
+    20% {
+        transform: translateX(-5px);
+        box-shadow: 0 0 8px 2px rgba(255, 0, 0, 0.3);
+    }
+    40% {
+        transform: translateX(5px);
+        box-shadow: 0 0 12px 3px rgba(255, 0, 0, 0.4);
+    }
+    60% {
+        transform: translateX(-3px);
+        box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.3);
+    }
+    80% {
+        transform: translateX(3px);
+        box-shadow: 0 0 8px 1px rgba(255, 0, 0, 0.2);
+    }
+    100% {
+        transform: translateX(0);
+        box-shadow: 0 0 5px 0 rgba(255, 0, 0, 0.1);
+    }
 }
 
 .form-control.error:focus {
     border-color: #090980 !important;
-    box-shadow: 0 0 0 2px rgba(9, 9, 128, 0.2) !important;
+    box-shadow: 0 0 0 3px rgba(9, 9, 128, 0.2) !important;
+    animation: none; /* Отключаем анимацию при фокусе */
 }
 
 @keyframes shake {
