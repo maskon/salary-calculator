@@ -1,4 +1,4 @@
-const CACHE_NAME = 'salary-calculator-v2';
+const CACHE_NAME = 'salary-calculator-v3';
 const BASE_PATH = self.location.pathname.includes('github.io') ? 
     (() => {
         const path = self.location.pathname;
@@ -84,4 +84,5 @@ self.addEventListener('activate', event => {
             );
         })
     );
+
 });
