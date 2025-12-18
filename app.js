@@ -396,39 +396,118 @@ setTimeout(function () {
   }
 }, 10000)
 
-// Регистрация Service Worker
+// Регистрация Service Worker с проверкой путей
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    const swUrl = '/sw.js'
+    // Определяем путь для GitHub Pages
+    const isGitHubPages = window.location.hostname.includes('github.io')
+    let swPath = '/sw.js'
+
+    if (isGitHubPages) {
+      const path = window.location.pathname
+      const pathParts = path.split('/')
+
+      // Если в пути есть имя репозитория
+      if (pathParts.length > 2) {
+        swPath = '/' + pathParts[1] + '/sw.js'
+      }
+    }
+
+    console.log('Регистрация Service Worker по пути:', swPath)
 
     navigator.serviceWorker
-      .register(swUrl)
+      .register(swPath)
       .then(registration => {
-        console.log('Service Worker зарегистрирован:', registration.scope)
+        console.log('Service Worker успешно зарегистрирован:', registration.scope)
 
-        // Проверяем обновления каждые 24 часа
-        setInterval(
-          () => {
-            registration.update()
-          },
-          24 * 60 * 60 * 1000
-        )
-
-        // Отслеживаем состояние Service Worker
+        // Проверяем обновления
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing
+
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              // Новый SW установлен, можно предложить обновление
-              if (confirm('Доступна новая версия приложения. Обновить?')) {
-                window.location.reload()
-              }
+              console.log('Доступна новая версия приложения')
+              // Можно показать уведомление пользователю
             }
           })
         })
       })
       .catch(error => {
         console.log('Ошибка регистрации Service Worker:', error)
+
+        // Fallback для GitHub Pages
+        if (isGitHubPages && error.message.includes('404')) {
+          console.log('Пробуем альтернативный путь...')
+
+          // Пробуем другой путь
+          const altSwPath = '/salary-calculator/sw.js'
+          navigator.serviceWorker
+            .register(altSwPath)
+            .then(reg =>
+              console.log('Service Worker зарегистрирован по альтернативному пути:', reg.scope)
+            )
+            .catch(err => console.log('Вторая попытка также не удалась:', err))
+        }
       })
   })
 }
+
+// В app.js добавьте
+let deferredPrompt
+
+window.addEventListener('beforeinstallprompt', e => {
+  // Предотвращаем автоматическое показ баннера
+  e.preventDefault()
+  deferredPrompt = e
+
+  // Показываем свою кнопку установки
+  showInstallButton()
+})
+
+function showInstallButton() {
+  const installBtn = document.createElement('button')
+  installBtn.textContent = 'Установить приложение'
+  installBtn.className = 'install-btn'
+  installBtn.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #1668e3;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 1000;
+    `
+
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return
+
+    // Показываем нативный баннер установки
+    deferredPrompt.prompt()
+
+    // Ждем ответа пользователя
+    const { outcome } = await deferredPrompt.userChoice
+
+    if (outcome === 'accepted') {
+      console.log('Пользователь установил приложение')
+    } else {
+      console.log('Пользователь отказался от установки')
+    }
+
+    deferredPrompt = null
+    installBtn.remove()
+  })
+
+  // Показываем кнопку только если поддерживается
+  if (deferredPrompt) {
+    document.body.appendChild(installBtn)
+  }
+}
+
+// Проверяем, установлено ли приложение
+window.addEventListener('appinstalled', () => {
+  console.log('Приложение успешно установлено')
+  // Можно спрятать кнопку установки
+})
