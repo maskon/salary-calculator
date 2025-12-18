@@ -465,45 +465,102 @@ window.addEventListener('beforeinstallprompt', e => {
 })
 
 function showInstallButton() {
+  if (document.querySelector('.install-btn')) return
+
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  )
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent)
+
+  // На iOS показываем другое сообщение
+  let buttonText = isMobile ? '📱 Установить' : '➕ Установить приложение'
+  if (isIOS) {
+    buttonText = '📲 Добавить на главный экран'
+  }
+
   const installBtn = document.createElement('button')
-  installBtn.textContent = 'Установить приложение'
+  installBtn.textContent = buttonText
   installBtn.className = 'install-btn'
+
+  // Базовые стили
   installBtn.style.cssText = `
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: #1668e3;
+        bottom: ${isMobile ? '100px' : '30px'};
+        right: ${isMobile ? '10px' : '20px'};
+        background: linear-gradient(135deg, #1668e3, #0d47a1);
         color: white;
-        padding: 10px 20px;
+        padding: ${isMobile ? '10px 16px' : '12px 24px'};
         border: none;
-        border-radius: 5px;
+        border-radius: 25px;
         cursor: pointer;
         z-index: 1000;
+        font-size: ${isMobile ? '13px' : '14px'};
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(22, 104, 227, 0.3);
+        max-width: ${isMobile ? '140px' : '180px'};
+        word-wrap: break-word;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
     `
 
   installBtn.addEventListener('click', async () => {
+    if (isIOS) {
+      // На iOS показываем инструкцию
+      alert(
+        'Для установки приложения:\n1. Нажмите кнопку "Поделиться"\n2. Выберите "На экран «Домой»"\n3. Нажмите "Добавить"'
+      )
+      return
+    }
+
     if (!deferredPrompt) return
 
-    // Показываем нативный баннер установки
-    deferredPrompt.prompt()
+    installBtn.textContent = 'Устанавливается...'
+    installBtn.disabled = true
 
-    // Ждем ответа пользователя
-    const { outcome } = await deferredPrompt.userChoice
+    try {
+      deferredPrompt.prompt()
+      const { outcome } = await deferredPrompt.userChoice
 
-    if (outcome === 'accepted') {
-      console.log('Пользователь установил приложение')
-    } else {
-      console.log('Пользователь отказался от установки')
+      if (outcome === 'accepted') {
+        installBtn.textContent = '✓ Установлено!'
+        setTimeout(() => {
+          installBtn.style.opacity = '0'
+          setTimeout(() => installBtn.remove(), 300)
+        }, 1500)
+      } else {
+        installBtn.textContent = buttonText
+        installBtn.disabled = false
+      }
+    } catch (error) {
+      console.error('Ошибка установки:', error)
+      installBtn.textContent = buttonText
+      installBtn.disabled = false
     }
 
     deferredPrompt = null
-    installBtn.remove()
   })
 
-  // Показываем кнопку только если поддерживается
-  if (deferredPrompt) {
-    document.body.appendChild(installBtn)
-  }
+  document.body.appendChild(installBtn)
+
+  // Плавное появление
+  setTimeout(() => {
+    installBtn.style.opacity = '1'
+    installBtn.style.transform = 'translateY(0)'
+  }, 100)
+
+  // Автоматическое скрытие через 15 секунд
+  setTimeout(() => {
+    if (installBtn.parentNode) {
+      installBtn.style.opacity = '0'
+      setTimeout(() => {
+        if (installBtn.parentNode) {
+          installBtn.remove()
+        }
+      }, 300)
+    }
+  }, 10000)
 }
 
 // Проверяем, установлено ли приложение
