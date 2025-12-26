@@ -11,13 +11,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Калькулятор зарплаты">
-    <link rel="icon" type="image/png" href="favicon/icon-32x32.png" sizes="32x32">  
-    <link rel="icon" type="image/png" href="favicon/icon-192x192.png" sizes="192x192">   
-    <link rel="apple-touch-icon" href="favicon/icon-180x180.png" sizes="180x180">
-    <link rel="apple-touch-icon" href="favicon/icon-152x152.png" sizes="152x152">
-    <link rel="apple-touch-icon" href="favicon/icon-144x144.png" sizes="144x144">
-    <link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#1668e3">
-    <link rel="icon" href="favicon/favicon.ico">
+    <link rel="icon" type="image/png" href="/favicon/icon-32x32.png" sizes="32x32">  
+    <link rel="icon" type="image/png" href="/favicon/icon-192x192.png" sizes="192x192">   
+    <link rel="apple-touch-icon" href="/favicon/icon-180x180.png" sizes="180x180">
+    <link rel="apple-touch-icon" href="/favicon/icon-152x152.png" sizes="152x152">
+    <link rel="apple-touch-icon" href="/favicon/icon-144x144.png" sizes="144x144">
+    <link rel="icon" href="/favicon/favicon.ico">
     <meta name="msapplication-TileColor" content="#1668e3">
     <meta name="msapplication-config" content="favicon/browserconfig.xml">
     <meta name="theme-color" content="#1668e3">
@@ -25,21 +24,37 @@
     <link rel="stylesheet" href="style.css">
 
     <script>
-        // Адаптация для GitHub Pages
-        if (window.location.hostname.includes('github.io')) {
-            const path = window.location.pathname
-            const basePath = path.split('/').slice(0, 2).join('/') || ''
-            
-            document.querySelectorAll('link[href^="favicon/"], link[href^="./favicon/"]').forEach(link => {
-                link.href = basePath + link.getAttribute('href')
-            })
-            
-            const manifest = document.querySelector('link[rel="manifest"]')
-            if (manifest) {
-                manifest.href = basePath + '/manifest.json'
-            }
+// Автоматическое определение путей
+(function() {
+    const isGitHubPages = window.location.hostname.includes('github.io')
+    let basePath = ''
+    
+    if (isGitHubPages) {
+        const path = window.location.pathname
+        const parts = path.split('/').filter(Boolean)
+        if (parts.length >= 1) {
+            basePath = '/' + parts[0]
         }
-    </script>
+    }
+    
+    // Заменяем все пути
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[href^="/"]').forEach(el => {
+            const href = el.getAttribute('href')
+            if (href && href.startsWith('/') && !href.startsWith('//')) {
+                el.href = basePath + href
+            }
+        })
+        
+        document.querySelectorAll('[src^="/"]').forEach(el => {
+            const src = el.getAttribute('src')
+            if (src && src.startsWith('/') && !src.startsWith('//')) {
+                el.src = basePath + src
+            }
+        })
+    })
+})()
+</script>
 </head>
 <body>
     <div id="pwa-loader">
@@ -103,17 +118,17 @@
     <script>
         // Fallback для скрытия лоадера если JS сломался
         window.addEventListener('error', function(e) {
-            console.error('Ошибка JS:', e);
-            const loader = document.getElementById('pwa-loader');
-            const appContent = document.getElementById('app-content');
+            console.error('Ошибка JS:', e)
+            const loader = document.getElementById('pwa-loader')
+            const appContent = document.getElementById('app-content')
             
             if (loader && loader.style.display !== 'none') {
                 setTimeout(function() {
-                    if (loader) loader.style.display = 'none';
-                    if (appContent) appContent.style.display = 'block';
-                }, 1000);
+                    if (loader) loader.style.display = 'none'
+                    if (appContent) appContent.style.display = 'block'
+                }, 1000)
             }
-        });
+        })
     </script>
     
     <!-- Yandex.Metrika counter -->
@@ -136,5 +151,4 @@
    
     <script src="app.js"></script>
 </body>
-
 </html>
