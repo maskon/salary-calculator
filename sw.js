@@ -36,7 +36,6 @@ const CORE_FILES = [
   './favicon/icon-72x72.png',
   './favicon/icon-96x96.png',
   './favicon/icon-144x144.png',
-  './favicon/icon-152x152.png',
   './favicon/icon-180x180.png',
   './favicon/icon-192x192.png',
   './favicon/icon-512x512.png',
