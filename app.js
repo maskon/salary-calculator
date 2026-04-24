@@ -4,6 +4,7 @@ const input2 = document.getElementById('input2')
 const input3 = document.getElementById('input3')
 const input4 = document.getElementById('input4')
 const input5 = document.getElementById('input5')
+const input6 = document.getElementById('input6')
 const submitBtn = document.getElementById('submit')
 const cleanInput = document.getElementById('clean')
 const blockResult = document.getElementById('block--result')
@@ -282,7 +283,12 @@ function calculateValues(hourlyRate, totalShifts, nightShifts, holidayShifts, we
   const daySalary = shiftRate * dayShifts
   const nightRate = (shiftRate * NIGHT_PERCENT) / 100
   const nightSalary = (nightRate + shiftRate) * nightShifts
-  const milkCompensation = totalShifts * MILK_COMPENSATION
+  let milkCompensation 
+  if (input6.checked) {
+    milkCompensation = 0
+  } else {
+    milkCompensation = totalShifts * MILK_COMPENSATION
+  }
   const holidaySalary = holidayShifts * shiftRate
   const weekendSalary = (weekendShifts * shiftRate * WEEKEND_PERCENT) / 100
 

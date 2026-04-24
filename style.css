@@ -96,7 +96,6 @@ body {
   font-weight: 700;
 }
 
-/* Добавьте в CSS */
 .form-control {
   font-size: 18px;
   font-weight: 700;
@@ -172,6 +171,24 @@ input::-webkit-input-placeholder {
 input::-moz-placeholder {
   font-weight: 400;
   opacity: 0.6;
+}
+
+.checkbox_item .calculator__item {
+  margin-bottom: 0px;
+}
+
+.checkbox_item .form-control {
+  width: 18px;
+}
+
+.checkbox_item p {
+  font-size: 13px;
+  color: #e40221;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
 }
 
 .buttons {
