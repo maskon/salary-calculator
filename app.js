@@ -283,14 +283,27 @@ function calculateValues(hourlyRate, totalShifts, nightShifts, holidayShifts, we
   const daySalary = shiftRate * dayShifts
   const nightRate = (shiftRate * NIGHT_PERCENT) / 100
   const nightSalary = (nightRate + shiftRate) * nightShifts
+
   let milkCompensation 
   if (input6.checked) {
     milkCompensation = 0
   } else {
     milkCompensation = totalShifts * MILK_COMPENSATION
   }
-  const holidaySalary = holidayShifts * shiftRate
-  const weekendSalary = (weekendShifts * shiftRate * WEEKEND_PERCENT) / 100
+
+  let holidaySalary
+  if (input6.checked) {
+    holidaySalary = 0
+  } else {
+    holidaySalary = holidayShifts * shiftRate
+  }
+
+  let weekendSalary
+  if (input6.checked) {
+    weekendSalary = 0
+  } else {
+    weekendSalary = (weekendShifts * shiftRate * WEEKEND_PERCENT) / 100
+  }
 
   sum = daySalary + nightSalary + milkCompensation + holidaySalary + weekendSalary
   const taxableAmount = sum - milkCompensation
@@ -458,7 +471,6 @@ if ('serviceWorker' in navigator) {
   })
 }
 
-// В app.js добавьте
 let deferredPrompt
 
 window.addEventListener('beforeinstallprompt', e => {
