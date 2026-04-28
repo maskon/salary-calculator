@@ -1,5 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
+:root {
+  --bg: #333333;
+  --color-text: #3c3e3e;
+  --color-error: red;
+  --blue: #0062a3;
+  --dark-blue: #1668e3;
+  --green: #3d9950;
+  --border-color: var(--border-color);
+}
+
 /*Обнуление*/
 
 * {
@@ -55,7 +65,7 @@ body {
   margin: 0;
   font-size: 16px;
   line-height: 1.2;
-  color: #333333;
+  color: var(--bg);
 }
 
 .calculator {
@@ -67,7 +77,7 @@ body {
 }
 
 .title {
-  color: #3c3e3e;
+  color: var(--color-text);
   font-size: 30px;
   font-weight: 700;
   text-align: center;
@@ -83,6 +93,12 @@ body {
   margin-bottom: 10px;
 }
 
+.calculator__item__text {
+  font-size: 13px;
+  color: var(--blue);
+  margin-bottom: 10px;
+}
+
 .calculator__item label {
   position: relative;
   margin-right: 15px;
@@ -92,8 +108,12 @@ body {
   position: absolute;
   top: 3px;
   right: -12px;
-  color: red;
+  color: var(--color-error);
   font-weight: 700;
+}
+
+.calculator__item.block__mb {
+  margin-bottom: 0px;
 }
 
 .form-control {
@@ -102,18 +122,18 @@ body {
   padding: 4px;
   border: 2px solid #b9c0c5;
   box-sizing: border-box;
-  color: #3d9950;
+  color: var(--green);
   transition: all 0.3s ease;
 }
 
 .form-control:focus {
-  border-color: #090980;
+  border-color: var(--border-color);
   outline: none;
   box-shadow: 0 0 0 3px rgba(9, 9, 128, 0.2);
 }
 
 .form-control.error {
-  border-color: red !important;
+  border-color: var(--color-error) !important;
   animation: errorAlert 0.6s ease-in-out;
 }
 
@@ -145,7 +165,7 @@ body {
 }
 
 .form-control.error:focus {
-  border-color: #090980 !important;
+  border-color: var(--border-color) !important;
   box-shadow: 0 0 0 3px rgba(9, 9, 128, 0.2) !important;
   animation: none; /* Отключаем анимацию при фокусе */
 }
@@ -173,6 +193,10 @@ input::-moz-placeholder {
   opacity: 0.6;
 }
 
+.input__block__none {
+  display: none;
+}
+
 .checkbox_item .calculator__item {
   margin-bottom: 0px;
 }
@@ -183,12 +207,20 @@ input::-moz-placeholder {
 
 .checkbox_item p {
   font-size: 13px;
-  color: #0062a3;
+  color: var(--blue);
 }
 
 .checkbox {
   width: 18px;
   height: 18px;
+}
+
+.checkbox__block {
+  display: none;
+}
+
+.checkbox__block p {
+  margin-bottom: 10px;
 }
 
 .buttons {
@@ -218,12 +250,12 @@ input::-moz-placeholder {
 }
 
 .btn:hover {
-  background-color: #0062a3;
+  background-color: var(--blue);
   color: #fff;
 }
 
 .btn:focus {
-  background-color: #0062a3;
+  background-color: var(--blue);
   color: #fff;
   border: 1px solid #555;
 }
@@ -254,7 +286,7 @@ input::-moz-placeholder {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #333333;
+  color: var(--bg);
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 5px;
@@ -266,7 +298,7 @@ input::-moz-placeholder {
 }
 
 .result-sp {
-  color: #1668e3;
+  color: var(--dark-blue);
   font-weight: 400;
 }
 
@@ -274,7 +306,7 @@ input::-moz-placeholder {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #1668e3;
+  color: var(--dark-blue);
   font-size: 34px;
   font-weight: 400;
 }
@@ -413,6 +445,10 @@ input::-moz-placeholder {
 
   .mb {
     margin-bottom: 8px;
+  }
+
+  .checkbox__block p {
+    margin-bottom: 6px;
   }
 }
 
