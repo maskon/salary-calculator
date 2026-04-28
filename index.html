@@ -39,44 +39,62 @@
             <div class="calculator__item">
                 <div class="fl">
                     <img src="img/overtime.svg" alt="time" width="22px">
-                    <label for="input1">Какой у тебя тариф?<span>*</span></label>
+                    <label for="input-tariff">Какой у тебя тариф?<span>*</span></label>
                 </div>
-                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input1" data-type="input1">
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input-tariff" data-type="inputTariff">
             </div>
             <div class="calculator__item">
                 <div class="fl">
                     <img src="img/work.svg" alt="work" width="22px">
-                    <label for="input2">Кол-во всех смен<span>*</span></label>
+                    <label for="input-all-shifts">Кол-во всех смен<span>*</span></label>
                 </div>
-                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input2" data-type="input2">
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input-all-shifts" data-type="inputAllShifts">
             </div>
             <div class="calculator__item">
                 <div class="fl">
                     <img src="img/night.svg" alt="night" width="22px">
-                    <label for="input3">Ночные смены</label>
+                    <label for="input-night">Ночные смены</label>
                 </div>
-                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input3" data-type="input3">
-            </div>
-            <div class="calculator__item">
-                <div class="fl">
-                    <img src="img/gift.svg" alt="gift" width="22px">
-                    <label for="input4">Праздничные смены</label>
-                </div>
-                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input4" data-type="input4">
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input-night" data-type="inputNight">
             </div>
             <div class="calculator__item">
                 <div class="fl">
                     <img src="img/house-with-garden.svg" alt="house-with-garden" width="22px">
-                    <label for="input5">Выходные смены (переработка)</label>
+                    <label for="input-free">Выходные смены (переработка)</label>
                 </div>
-                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input5" data-type="input5">
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input-free" data-type="inputFree">
             </div>
-
+            <div class="calculator__item">
+                <div class="fl">
+                    <img src="img/gift.svg" alt="gift" width="22px">
+                    <label for="input-holiday">Праздничные смены</label>
+                </div>
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input-holiday" data-type="inputHoliday">
+            </div>
+            <div class="checkbox_item checkbox__block" id="checkbox__block">
+                <div class="calculator__item">
+                    <div class="fl">
+                        <input type="checkbox" id="checkbox-night" class="form-control checkbox">
+                        <label for="checkbox-night">Ночные смены</label>
+                    </div>
+                </div>
+                <p>Нажми если у тебя есть ночные праздничные смены</p>
+            </div>
+            <div class="input__block__none" id="checkbox__block__night">
+                <div class="calculator__item block__mb">
+                    <div class="fl">
+                        <img src="img/night.svg" alt="night" width="22px">
+                        <label for="input-holiday-night">Праздничные смены (ночь)</label>
+                    </div>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input-holiday-night" data-type="inputHolidayNight">
+                </div>
+                <p class="calculator__item__text">Введи кол-во отработаных часов в ночь</p>
+            </div>
             <div class="checkbox_item">
                 <div class="calculator__item">
                     <div class="fl">
-                        <input type="checkbox" id="input6" class="form-control checkbox">
-                        <label for="input6">Расчет аванса</label>
+                        <input type="checkbox" id="checkbox-advance" class="form-control checkbox">
+                        <label for="checkbox-advance">Расчет аванса</label>
                     </div>
                 </div>
                 <p>Нажми для расчета аванса</p>

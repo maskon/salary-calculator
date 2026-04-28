@@ -1,13 +1,17 @@
 const calculatorElem = document.getElementById('calculator')
-const input1 = document.getElementById('input1')
-const input2 = document.getElementById('input2')
-const input3 = document.getElementById('input3')
-const input4 = document.getElementById('input4')
-const input5 = document.getElementById('input5')
-const input6 = document.getElementById('input6')
+const inputTariff = document.getElementById('input-tariff')
+const inputAllShifts = document.getElementById('input-all-shifts')
+const inputNight = document.getElementById('input-night')
+const inputHoliday = document.getElementById('input-holiday')
+const inputHolidayNight = document.getElementById('input-holiday-night')
+const inputFree = document.getElementById('input-free')
+const checkboxAdvance = document.getElementById('checkbox-advance')
+const checkboxNight = document.getElementById('checkbox-night')
 const submitBtn = document.getElementById('submit')
 const cleanInput = document.getElementById('clean')
 const blockResult = document.getElementById('block--result')
+const checkboxBlock = document.getElementById('checkbox__block')
+const checkboxBlockNight = document.getElementById('checkbox__block__night')
 
 let sum,
   sumSalary,
@@ -28,6 +32,7 @@ const TAX_PERCENT = 13
 const HARMFUL_PERCENT = 4
 const MAX_INPUT1 = 9999
 const MAX_INPUT_OTHERS = 99
+const MAX_HOLIDAY_NIGHT_HOURS = 999
 
 let saveTimeout
 ;(function () {
@@ -123,16 +128,121 @@ let saveTimeout
   })
 })()
 
+function validateAllInputs() {
+  const hourlyRate = getNumberValue(inputTariff)
+  const totalShifts = getNumberValue(inputAllShifts)
+  const nightShifts = getNumberValue(inputNight)
+  const holidayShifts = getNumberValue(inputHoliday)
+  const weekendShifts = getNumberValue(inputFree)
+  const holidayNightHours = getNumberValue(inputHolidayNight)
+
+  let hasErrors = false
+
+  // Проверяем обязательные поля
+  if (!hourlyRate || !totalShifts) {
+    if (!hourlyRate) markError(inputTariff)
+    if (!totalShifts) markError(inputAllShifts)
+    hasErrors = true
+  } else {
+    inputTariff.classList.remove('error')
+    inputTariff.style.border = ''
+    inputAllShifts.classList.remove('error')
+    inputAllShifts.style.border = ''
+  }
+
+  // Проверяем ночные смены
+  if (nightShifts > totalShifts) {
+    markError(inputNight)
+    hasErrors = true
+  } else {
+    inputNight.classList.remove('error')
+    inputNight.style.border = ''
+  }
+
+  // Проверяем праздничные смены
+  if (holidayShifts > totalShifts) {
+    markError(inputHoliday)
+    hasErrors = true
+  } else {
+    inputHoliday.classList.remove('error')
+    inputHoliday.style.border = ''
+  }
+
+  // Проверяем выходные смены
+  if (weekendShifts > totalShifts) {
+    markError(inputFree)
+    hasErrors = true
+  } else {
+    inputFree.classList.remove('error')
+    inputFree.style.border = ''
+  }
+
+  // Проверяем праздничные ночные часы
+  const maxHolidayNightHours = holidayShifts * 8
+  if (holidayNightHours > maxHolidayNightHours) {
+    markError(inputHolidayNight)
+    hasErrors = true
+  } else {
+    inputHolidayNight.classList.remove('error')
+    inputHolidayNight.style.border = ''
+  }
+
+  return !hasErrors
+}
+
+function validateInputs() {
+  const hourlyRate = getNumberValue(inputTariff)
+  const totalShifts = getNumberValue(inputAllShifts)
+
+  if (!hourlyRate || !totalShifts) {
+    showError('заполните все обязательные поля (тарифная ставка и общее количество смен)!')
+    if (!hourlyRate) markError(inputTariff)
+    if (!totalShifts) markError(inputAllShifts)
+    return false
+  }
+
+  // Снимаем ошибку, если поля заполнены
+  if (hourlyRate) {
+    inputTariff.classList.remove('error')
+    inputTariff.style.border = ''
+  }
+  if (totalShifts) {
+    inputAllShifts.classList.remove('error')
+    inputAllShifts.style.border = ''
+  }
+
+  return true
+}
+
+function trackInput(input) {
+  input.addEventListener('input', () => {
+    const value = parseFloat(input.value)
+    if (!isNaN(value) && value > 0) {
+      checkboxBlock.style.display = 'block'
+    } else {
+      checkboxBlock.style.display = 'none'
+    }
+  })
+}
+trackInput(inputHoliday)
+
+function trackCheckbox(checkbox) {
+  checkbox.addEventListener('change', () => {
+    checkboxBlockNight.style.display = checkbox.checked ? 'block' : 'none'
+  })
+}
+trackCheckbox(checkboxNight)
+
 const saveInput1 = () => {
   clearTimeout(saveTimeout)
   saveTimeout = setTimeout(() => {
-    localStorage.setItem(STORAGE_KEY_INPUT1, input1.value)
+    localStorage.setItem(STORAGE_KEY_INPUT1, inputTariff.value)
   }, 500)
 }
 
 const loadInput1 = () => {
   const saved = localStorage.getItem(STORAGE_KEY_INPUT1)
-  if (saved !== null) input1.value = saved
+  if (saved !== null) inputTariff.value = saved
 }
 
 const clearInput1 = () => localStorage.removeItem(STORAGE_KEY_INPUT1)
@@ -140,15 +250,73 @@ const clearInput1 = () => localStorage.removeItem(STORAGE_KEY_INPUT1)
 window.addEventListener('DOMContentLoaded', loadInput1)
 
 calculatorElem.addEventListener('input', e => {
-  if (/^input[1-5]$/.test(e.target.dataset.type)) {
+  if (
+    /^(inputTariff|inputAllShifts|inputNight|inputHoliday|inputHolidayNight|inputFree)$/.test(
+      e.target.dataset.type
+    )
+  ) {
     examinationInput(e)
-    if (e.target.dataset.type === 'input1') saveInput1()
+    if (e.target.dataset.type === 'inputTariff') saveInput1()
 
-    // Убираем ошибку, так как пользователь начал исправлять
+    // Убираем ошибку только с текущего инпута, так как пользователь начал его исправлять
     e.target.classList.remove('error')
     e.target.style.border = ''
   }
 })
+
+const allInputs = [
+  inputTariff,
+  inputAllShifts,
+  inputNight,
+  inputHoliday,
+  inputFree,
+  inputHolidayNight,
+]
+
+allInputs.forEach(input => {
+  if (input) {
+    input.addEventListener('blur', () => {
+      validateAllInputs()
+    })
+  }
+})
+
+function validateShifts(total, night, holiday, weekend, holidayNight) {
+  let isValid = true
+
+  if (night > total) {
+    markError(inputNight)
+    isValid = false
+  }
+
+  if (holiday > total) {
+    markError(inputHoliday)
+    isValid = false
+  }
+
+  if (weekend > total) {
+    markError(inputFree)
+    isValid = false
+  }
+
+  if (holidayNight > night * 8) {
+    markError(inputHolidayNight)
+    isValid = false
+  }
+
+  const maxHolidayNightHours = holiday * 8
+  if (holidayNight > maxHolidayNightHours) {
+    markError(inputHolidayNight)
+    isValid = false
+  }
+
+  if (!isValid) {
+    showValidationErrors()
+    return false
+  }
+
+  return true
+}
 
 const examinationInput = e => {
   let value = e.target.value
@@ -172,23 +340,79 @@ const examinationInput = e => {
     return ''
   }
 
-  let maxValue = e.target.dataset.type === 'input1' ? MAX_INPUT1 : MAX_INPUT_OTHERS
-
-  if (numericValue > maxValue) {
-    numericValue = maxValue
+  // Определяем максимальное значение по id элемента
+  if (e.target.id === 'input-tariff') {
+    if (numericValue > MAX_INPUT1) numericValue = MAX_INPUT1
+  } else if (e.target.id === 'input-holiday-night') {
+    if (numericValue > MAX_HOLIDAY_NIGHT_HOURS) numericValue = MAX_HOLIDAY_NIGHT_HOURS
+  } else {
+    if (numericValue > MAX_INPUT_OTHERS) numericValue = MAX_INPUT_OTHERS
   }
 
   e.target.value = String(numericValue)
   return e.target.value
 }
 
+// Защита от вставки текста с буквами
+const allInputsForProtection = [
+  inputTariff,
+  inputAllShifts,
+  inputNight,
+  inputHoliday,
+  inputHolidayNight,
+  inputFree,
+]
+
+allInputsForProtection.forEach(input => {
+  if (input) {
+    input.addEventListener('keydown', e => {
+      // Разрешаем: Backspace, Delete, Tab, Escape, Enter, стрелки, Home, End
+      if (
+        e.key === 'Backspace' ||
+        e.key === 'Delete' ||
+        e.key === 'Tab' ||
+        e.key === 'Escape' ||
+        e.key === 'Enter' ||
+        e.key === 'ArrowLeft' ||
+        e.key === 'ArrowRight' ||
+        e.key === 'ArrowUp' ||
+        e.key === 'ArrowDown' ||
+        e.key === 'Home' ||
+        e.key === 'End'
+      ) {
+        return
+      }
+
+      // Запрещаем ввод букв и символов (разрешаем только цифры)
+      if (!/^\d$/.test(e.key)) {
+        e.preventDefault()
+      }
+    })
+
+    // Защита от вставки
+    input.addEventListener('paste', e => {
+      const pastedText = (e.clipboardData || window.clipboardData).getData('text')
+      if (!/^\d+$/.test(pastedText)) {
+        e.preventDefault()
+        showError('Можно вставлять только цифры!')
+        setTimeout(() => {
+          blockResult.style.color = 'black'
+          blockResult.innerHTML = ''
+        }, 1500)
+      }
+    })
+  }
+})
+
 const getNumberValue = input => Number(input.value) || 0
 
 const markError = input => {
   if (!input) return
   input.classList.remove('error')
-  void input.offsetWidth
+  // Форсируем перерисовку
+  void input.offsetHeight
   input.classList.add('error')
+  input.style.border = '2px solid red'
 }
 
 const capitalizeFirst = str => str.charAt(0).toUpperCase() + str.slice(1)
@@ -214,69 +438,93 @@ function calculateSalary() {
 
   if (!validateInputs()) return false
 
-  const [hourlyRate, totalShifts, nightShifts, holidayShifts, weekendShifts] = [
-    input1,
-    input2,
-    input3,
-    input4,
-    input5,
+  const [hourlyRate, totalShifts, nightShifts, holidayShifts, weekendShifts, holidayNightHours] = [
+    inputTariff,
+    inputAllShifts,
+    inputNight,
+    inputHoliday,
+    inputFree,
+    inputHolidayNight,
   ].map(getNumberValue)
 
-  if (!validateShifts(totalShifts, nightShifts, holidayShifts, weekendShifts)) return false
+  if (!validateShifts(totalShifts, nightShifts, holidayShifts, weekendShifts, holidayNightHours))
+    return false
 
-  calculateValues(hourlyRate, totalShifts, nightShifts, holidayShifts, weekendShifts)
+  calculateValues(
+    hourlyRate,
+    totalShifts,
+    nightShifts,
+    holidayShifts,
+    weekendShifts,
+    holidayNightHours
+  )
   renderBlock()
   return true
 }
 
-function validateInputs() {
-  if (!input1.value.trim() || !input2.value.trim()) {
+function showValidationErrors() {
+  const totalShifts = getNumberValue(inputAllShifts)
+  const nightShifts = getNumberValue(inputNight)
+  const holidayShifts = getNumberValue(inputHoliday)
+  const weekendShifts = getNumberValue(inputFree)
+  const holidayNightHours = getNumberValue(inputHolidayNight)
+  const hourlyRate = getNumberValue(inputTariff)
+
+  if (!hourlyRate || !totalShifts) {
     showError('заполните все обязательные поля!')
-    if (!input2.value.trim()) markError(input2)
-    if (!input1.value.trim()) markError(input1)
-    return false
+    return
   }
-  return true
-}
 
-function validateShifts(total, night, holiday, weekend) {
   const errors = []
-  const errorInputs = []
 
-  if (night > total) {
-    errorInputs.push(input3)
-    errors.push('ночных')
-  }
-  if (holiday > total) {
-    errorInputs.push(input4)
-    errors.push('праздничных')
-  }
-  if (weekend > total) {
-    errorInputs.push(input5)
-    errors.push('выходных')
+  if (nightShifts > totalShifts) errors.push('ночных смен')
+  if (holidayShifts > totalShifts) errors.push('праздничных смен')
+  if (weekendShifts > totalShifts) errors.push('выходных смен')
+  if (holidayNightHours > nightShifts * 8) errors.push('праздн. ночных часов')
+
+  const maxHolidayNightHours = holidayShifts * 8
+  if (holidayNightHours > maxHolidayNightHours) {
+    errors.push(
+      `праздничных ночных часов (не более ${maxHolidayNightHours}ч. при ${holidayShifts} праздн. смен${getPluralEnding(holidayShifts)})`
+    )
   }
 
   if (errors.length > 0) {
-    errorInputs.forEach(input => {
-      if (input) markError(input)
-    })
-
     let errorMessage
-    if (errors.length === 3) {
-      errorMessage = 'ночных, праздничных и выходных смен не может быть больше общего количества!'
+    if (errors.length === 4) {
+      errorMessage =
+        'Количество ночных, праздничных, выходных смен и праздничных ночных часов превышает допустимые значения!'
+    } else if (errors.length === 3) {
+      errorMessage = `${errors.slice(0, -1).join(', ')} и ${errors[errors.length - 1]} не может быть больше общего кол-ва!`
     } else if (errors.length === 2) {
-      errorMessage = `${errors.join(' и ')} смен не может быть больше общего количества!`
+      errorMessage = `${errors.join(' и ')} не может быть больше общего кол-ва!`
     } else {
-      errorMessage = `${errors[0]} смен не может быть больше общего количества!`
+      errorMessage = `${errors[0]} ${
+        errors[0].includes('праздничных ночных часов')
+          ? 'не может быть больше, чем праздничных смен'
+          : errors[0].includes('ночных часов')
+            ? 'не может быть больше, чем ночных смен'
+            : 'не может быть больше общего количества смен'
+      }!`
     }
-
     showError(errorMessage)
-    return false
   }
-  return true
 }
 
-function calculateValues(hourlyRate, totalShifts, nightShifts, holidayShifts, weekendShifts) {
+function getPluralEnding(num) {
+  if (num === 1) return 'е'
+  if (num >= 2 && num <= 99) return 'ах'
+  return 'ах'
+}
+
+function calculateValues(
+  hourlyRate,
+  totalShifts,
+  nightShifts,
+  holidayShifts,
+  weekendShifts,
+  holidayNightHours
+) {
   const shiftRate = hourlyRate * HOURS_IN_SHIFT
   const dayShifts = totalShifts - nightShifts
 
@@ -284,28 +532,31 @@ function calculateValues(hourlyRate, totalShifts, nightShifts, holidayShifts, we
   const nightRate = (shiftRate * NIGHT_PERCENT) / 100
   const nightSalary = (nightRate + shiftRate) * nightShifts
 
-  let milkCompensation 
-  if (input6.checked) {
+  let milkCompensation
+  if (checkboxAdvance.checked) {
     milkCompensation = 0
   } else {
     milkCompensation = totalShifts * MILK_COMPENSATION
   }
 
   let holidaySalary
-  if (input6.checked) {
+  if (checkboxAdvance.checked) {
     holidaySalary = 0
   } else {
     holidaySalary = holidayShifts * shiftRate
   }
 
   let weekendSalary
-  if (input6.checked) {
+  if (checkboxAdvance.checked) {
     weekendSalary = 0
   } else {
     weekendSalary = (weekendShifts * shiftRate * WEEKEND_PERCENT) / 100
   }
 
-  sum = daySalary + nightSalary + milkCompensation + holidaySalary + weekendSalary
+  const holidayNightInShifts = holidayNightHours / 8
+  sumNightHoliday = holidayNightInShifts * nightRate
+
+  sum = daySalary + nightSalary + milkCompensation + holidaySalary + weekendSalary + sumNightHoliday
   const taxableAmount = sum - milkCompensation
   const taxAmount = (taxableAmount * TAX_PERCENT) / 100
   sumClean = sum - taxAmount
@@ -313,15 +564,31 @@ function calculateValues(hourlyRate, totalShifts, nightShifts, holidayShifts, we
   sumNight = nightRate * nightShifts
   sumMilk = milkCompensation
   sumWeekend = weekendSalary
-  sumSalary = sum - sumNight - sumMilk - sumWeekend
+  sumSalary = sum - sumNight - sumMilk - sumWeekend - sumNightHoliday
   sumHarmfulConditions = (sumSalary * HARMFUL_PERCENT) / 100
   sumSalaryPercent = sumSalary - sumHarmfulConditions
+}
+
+function uncheckAllCheckboxes(checkbox) {
+  checkbox.checked = false
 }
 
 function clearAll() {
   blockResult.style.display = 'none'
 
-  const inputs = [input1, input2, input3, input4, input5]
+  const inputs = [
+    inputTariff,
+    inputAllShifts,
+    inputNight,
+    inputHoliday,
+    inputFree,
+    inputHolidayNight,
+  ]
+
+  uncheckAllCheckboxes(checkboxNight)
+  uncheckAllCheckboxes(checkboxAdvance)
+  checkboxBlock.style.display = 'none'
+  checkboxBlockNight.style.display = 'none'
 
   if (!inputs || !Array.isArray(inputs)) {
     clearInput1()
@@ -385,7 +652,7 @@ function renderBlock() {
 }
 
 function renderInput() {
-  const inputs = [input1, input2, input3, input4, input5]
+  const inputs = [inputTariff, inputAllShifts, inputNight, inputHoliday, inputFree]
 
   inputs.forEach(input => {
     if (!input) return
