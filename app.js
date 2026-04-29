@@ -555,7 +555,13 @@ function calculateValues(
     weekendSalary = (weekendShifts * shiftRate * WEEKEND_PERCENT) / 100
   }
 
-  const holidayNightInShifts = holidayNightHours / 8
+  let holidayNightInShifts
+  if (checkboxAdvance.checked) {
+    holidayNightInShifts = 0
+  } else {
+    holidayNightInShifts = holidayNightHours / 8
+  }
+
   sumNightHoliday = holidayNightInShifts * nightRate
 
   sum = daySalary + nightSalary + milkCompensation + holidaySalary + weekendSalary + sumNightHoliday
@@ -636,7 +642,7 @@ function renderBlock() {
   if (sumHolidaySalary > 0) {
     additionalBlocks += `
     <div class="fl">
-      <img src="img/santa-claus.svg" alt="nalog" width="20px"> Праздничные: 
+      <img src="img/santa-claus.svg" alt="nalog" width="20px" height='20px'> Праздничные: 
       <span class="result-sp">${formatMoney(sumHolidaySalary)}</span>
     </div>`
   }
@@ -644,7 +650,7 @@ function renderBlock() {
   if (sumNightHoliday > 0) {
     additionalBlocks += `
     <div class="fl">
-      <img src="img/zzz.svg" alt="nalog" width="20px"> Праздничные ночные: 
+      <img src="img/zzz.svg" alt="nalog" width="20px" height='20px'> Праздничные ночные: 
       <span class="result-sp">${formatMoney(sumNightHoliday)}</span>
     </div>`
   }
