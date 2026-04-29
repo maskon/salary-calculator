@@ -1,4 +1,4 @@
-const CACHE_NAME = 'salary-calculator-v4'
+const CACHE_NAME = 'salary-calculator-v7'
 const APP_PREFIX = 'salary-calculator'
 
 // Определяем путь для GitHub Pages
@@ -54,6 +54,8 @@ const CORE_FILES = [
   './img/night.svg',
   './img/gift.svg',
   './img/house-with-garden.svg',
+  './img/zzz.svg',
+  './img/santa-claus.svg',
 ]
 
 // Преобразуем относительные пути в абсолютные для GitHub Pages
