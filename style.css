@@ -484,6 +484,7 @@ input::-moz-placeholder {
 }
 
 .footer__link {
+  font-size: 12px;
   color: var(--blue);
   text-decoration: none;
 }
