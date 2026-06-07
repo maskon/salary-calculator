@@ -1,4 +1,4 @@
-const CACHE_NAME = 'salary-calculator-v4.04test'
+const CACHE_NAME = 'salary-calculator-v4.04test2'
 const APP_PREFIX = 'salary-calculator'
 
 // Определяем путь для GitHub Pages
