@@ -1,136 +1,218 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Калькулятор ЗП АО "САПТ"</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1668e3">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Калькулятор зарплаты">
-    <link rel="icon" type="image/png" href="/favicon/icon-32x32.png" sizes="32x32">  
-    <link rel="icon" type="image/png" href="/favicon/icon-192x192.png" sizes="192x192">   
-    <link rel="apple-touch-icon" href="/favicon/icon-180x180.png" sizes="180x180">
-    <link rel="apple-touch-icon" href="/favicon/icon-144x144.png" sizes="144x144">
-    <link rel="icon" href="/favicon/favicon.ico">
-    <meta name="msapplication-TileColor" content="#1668e3">
-    <meta name="msapplication-config" content="favicon/browserconfig.xml">
-    <meta name="theme-color" content="#1668e3">
-    
-    <link rel="stylesheet" href="style.css">
-    <script src="path-fixer.js"></script>  
-</head>
-<body>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1668e3" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Калькулятор зарплаты" />
+    <link rel="icon" type="image/png" href="/favicon/icon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/favicon/icon-192x192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/favicon/icon-180x180.png" sizes="180x180" />
+    <link rel="apple-touch-icon" href="/favicon/icon-144x144.png" sizes="144x144" />
+    <link rel="icon" href="/favicon/favicon.ico" />
+    <meta name="msapplication-TileColor" content="#1668e3" />
+    <meta name="msapplication-config" content="favicon/browserconfig.xml" />
+    <meta name="theme-color" content="#1668e3" />
+
+    <link rel="stylesheet" href="style.css" />
+    <script src="path-fixer.js"></script>
+  </head>
+  <body>
     <div id="pwa-loader">
-        <div class="loader-logo">
-            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 60px; color: #1668e3;">💰</span>
-            </div>
+      <div class="loader-logo">
+        <div
+          style="
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <span style="font-size: 60px; color: #1668e3">💰</span>
         </div>
-        <div class="loader-spinner"></div>
-        <div class="loader-text" id="loader-message">Запуск калькулятора...</div>
+      </div>
+      <div class="loader-spinner"></div>
+      <div class="loader-text" id="loader-message">Запуск калькулятора...</div>
     </div>
 
     <div id="app-content">
-        <h1 class="title">Калькулятор зарплаты САПТ</h1>
-        <div class="calculator" id="calculator">
+      <h1 class="title">Калькулятор зарплаты САПТ</h1>
+      <div class="calculator" id="calculator">
+        <div class="main">
+          <div class="calculator__item">
+            <div class="fl">
+              <img src="img/overtime.svg" alt="time" width="22px" />
+              <label for="input-tariff">Какой у тебя тариф?<span>*</span></label>
+            </div>
+            <input
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              class="form-control"
+              placeholder="0"
+              id="input-tariff"
+              data-type="inputTariff"
+            />
+          </div>
+          <div class="calculator__item">
+            <div class="fl">
+              <img src="img/work.svg" alt="work" width="22px" />
+              <label for="input-all-shifts">Кол-во всех смен<span>*</span></label>
+            </div>
+            <input
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              class="form-control"
+              placeholder="0"
+              id="input-all-shifts"
+              data-type="inputAllShifts"
+            />
+          </div>
+          <div class="calculator__item">
+            <div class="fl">
+              <img src="img/night.svg" alt="night" width="22px" />
+              <label for="input-night">Ночные смены</label>
+            </div>
+            <input
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              class="form-control"
+              placeholder="0"
+              id="input-night"
+              data-type="inputNight"
+            />
+          </div>
+          <div class="calculator__item">
+            <div class="fl">
+              <img src="img/house-with-garden.svg" alt="house-with-garden" width="22px" />
+              <label for="input-free">Выходные смены (переработка)</label>
+            </div>
+            <input
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              class="form-control"
+              placeholder="0"
+              id="input-free"
+              data-type="inputFree"
+            />
+          </div>
+          <div class="calculator__item">
+            <div class="fl">
+              <img src="img/gift.svg" alt="gift" width="22px" />
+              <label for="input-holiday">Праздничные смены</label>
+            </div>
+            <input
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              class="form-control"
+              placeholder="0"
+              id="input-holiday"
+              data-type="inputHoliday"
+            />
+          </div>
+          <div class="checkbox_item checkbox__block" id="checkbox__block">
             <div class="calculator__item">
-                <div class="fl">
-                    <img src="img/overtime.svg" alt="time" width="22px">
-                    <label for="input-tariff">Какой у тебя тариф?<span>*</span></label>
-                </div>
-                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input-tariff" data-type="inputTariff">
+              <div class="fl">
+                <input type="checkbox" id="checkbox-night" class="form-control checkbox" />
+                <label for="checkbox-night">Ночные смены</label>
+              </div>
             </div>
+            <p>Нажми если у тебя есть ночные праздничные смены</p>
+          </div>
+          <div class="input__block__none" id="checkbox__block__night">
+            <div class="calculator__item block__mb">
+              <div class="fl">
+                <img src="img/weather-few-clouds-night.svg" alt="night" width="22px" />
+                <label for="input-holiday-night">Праздничные смены (ночь)</label>
+              </div>
+              <input
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                class="form-control"
+                placeholder="0"
+                id="input-holiday-night"
+                data-type="inputHolidayNight"
+              />
+            </div>
+            <p class="calculator__item__text">Введи кол-во отработаных часов в ночь</p>
+          </div>
+          <div class="checkbox_item">
             <div class="calculator__item">
-                <div class="fl">
-                    <img src="img/work.svg" alt="work" width="22px">
-                    <label for="input-all-shifts">Кол-во всех смен<span>*</span></label>
-                </div>
-                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input-all-shifts" data-type="inputAllShifts">
+              <div class="fl">
+                <input type="checkbox" id="checkbox-advance" class="form-control checkbox" />
+                <label for="checkbox-advance">Расчет аванса</label>
+              </div>
             </div>
-            <div class="calculator__item">
-                <div class="fl">
-                    <img src="img/night.svg" alt="night" width="22px">
-                    <label for="input-night">Ночные смены</label>
-                </div>
-                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input-night" data-type="inputNight">
-            </div>
-            <div class="calculator__item">
-                <div class="fl">
-                    <img src="img/house-with-garden.svg" alt="house-with-garden" width="22px">
-                    <label for="input-free">Выходные смены (переработка)</label>
-                </div>
-                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input-free" data-type="inputFree">
-            </div>
-            <div class="calculator__item">
-                <div class="fl">
-                    <img src="img/gift.svg" alt="gift" width="22px">
-                    <label for="input-holiday">Праздничные смены</label>
-                </div>
-                <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input-holiday" data-type="inputHoliday">
-            </div>
-            <div class="checkbox_item checkbox__block" id="checkbox__block">
-                <div class="calculator__item">
-                    <div class="fl">
-                        <input type="checkbox" id="checkbox-night" class="form-control checkbox">
-                        <label for="checkbox-night">Ночные смены</label>
-                    </div>
-                </div>
-                <p>Нажми если у тебя есть ночные праздничные смены</p>
-            </div>
-            <div class="input__block__none" id="checkbox__block__night">
-                <div class="calculator__item block__mb">
-                    <div class="fl">
-                        <img src="img/weather-few-clouds-night.svg" alt="night" width="22px">
-                        <label for="input-holiday-night">Праздничные смены (ночь)</label>
-                    </div>
-                    <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="0" id="input-holiday-night" data-type="inputHolidayNight">
-                </div>
-                <p class="calculator__item__text">Введи кол-во отработаных часов в ночь</p>
-            </div>
-            <div class="checkbox_item">
-                <div class="calculator__item">
-                    <div class="fl">
-                        <input type="checkbox" id="checkbox-advance" class="form-control checkbox">
-                        <label for="checkbox-advance">Расчет аванса</label>
-                    </div>
-                </div>
-                <p>Нажми для расчета аванса</p>
-            </div>
+            <p>Нажми для расчета аванса</p>
+          </div>
 
-            <div class="buttons">
-                <button class="btn" id="submit">Вычислить</button>
-                <button class="btn btn--clear" id="clean">Очистить</button>
-            </div>
-                <div class="text" id="block--result"></div>
-            </div>
-            <footer class="footer">
-                <a class="footer__link" target="_blank" href="https://t.me/maskon12">Написать разработчику</a>
-            </footer>
+          <div class="buttons">
+            <button class="btn" id="submit">Вычислить</button>
+            <button class="btn btn--clear" id="clean">Очистить</button>
+          </div>
+          <div class="text" id="block--result"></div>
         </div>
+        <footer class="footer">
+          <a class="footer__link" target="_blank" href="https://t.me/maskon12"
+            >Написать разработчику</a
+          >
+        </footer>
+      </div>
     </div>
-    
-    <!-- Yandex.Metrika counter -->
-<script type="text/javascript" >
-   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-   m[i].l=1*new Date();
-   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
-   ym(96236052, "init", {
-        clickmap:true,
-        trackLinks:true,
-        accurateTrackBounce:true,
-        webvisor:true
-   });
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/96236052" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
-  
-<script src="error-handler.js"></script>
-<script src="app.js"></script>
-</body>
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+      ;(function (m, e, t, r, i, k, a) {
+        m[i] =
+          m[i] ||
+          function () {
+            ;(m[i].a = m[i].a || []).push(arguments)
+          }
+        m[i].l = 1 * new Date()
+        for (var j = 0; j < document.scripts.length; j++) {
+          if (document.scripts[j].src === r) {
+            return
+          }
+        }
+        ;((k = e.createElement(t)),
+          (a = e.getElementsByTagName(t)[0]),
+          (k.async = 1),
+          (k.src = r),
+          a.parentNode.insertBefore(k, a))
+      })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym')
+
+      ym(96236052, 'init', {
+        clickmap: true,
+        trackLinks: true,
+        accurateTrackBounce: true,
+        webvisor: true,
+      })
+    </script>
+    <noscript
+      ><div>
+        <img
+          src="https://mc.yandex.ru/watch/96236052"
+          style="position: absolute; left: -9999px"
+          alt=""
+        /></div
+    ></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+    <script src="error-handler.js"></script>
+    <script src="app.js"></script>
+  </body>
 </html>
