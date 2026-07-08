@@ -4,6 +4,7 @@
   "description": "Расчет заработной платы",
   "start_url": ".",
   "scope": ".",
+  "version": "4.06",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
