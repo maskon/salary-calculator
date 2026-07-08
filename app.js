@@ -541,12 +541,7 @@ function calculateValues(
     milkCompensation = totalShifts * MILK_COMPENSATION
   }
 
-  let holidaySalary
-  if (checkboxAdvance.checked) {
-    holidaySalary = 0
-  } else {
-    holidaySalary = holidayShifts * shiftRate
-  }
+  let holidaySalary = holidayShifts * shiftRate
 
   let weekendSalary
   if (checkboxAdvance.checked) {
