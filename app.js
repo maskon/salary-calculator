@@ -4,8 +4,13 @@ const inputAllShifts = document.getElementById('input-all-shifts')
 const inputNight = document.getElementById('input-night')
 const inputHoliday = document.getElementById('input-holiday')
 const inputHolidayNight = document.getElementById('input-holiday-night')
+const inputAdditionally = document.getElementById('input-additionally')
+const inputAdditionallyNight = document.getElementById('input-additionally-night')
+const blockAdditionally = document.getElementById('input__block__additionally')
+const blockAdditionallyNight = document.getElementById('input__block__additionally__night')
 const inputFree = document.getElementById('input-free')
 const checkboxAdvance = document.getElementById('checkbox-advance')
+const checkboxAdditionally = document.getElementById('checkbox-additionally')
 const checkboxNight = document.getElementById('checkbox-night')
 const submitBtn = document.getElementById('submit')
 const cleanInput = document.getElementById('clean')
@@ -23,7 +28,9 @@ let sum,
   sumHarmfulConditions,
   sumSalaryPercent,
   sumHolidaySalary,
-  sumNightHoliday
+  sumNightHoliday,
+  sumAdditionally,
+  sumAdditionallyNight
 
 const STORAGE_KEY_INPUT1 = 'calculator_input1'
 const HOURS_IN_SHIFT = 8
@@ -35,6 +42,7 @@ const HARMFUL_PERCENT = 4
 const MAX_INPUT1 = 9999
 const MAX_INPUT_OTHERS = 99
 const MAX_HOLIDAY_NIGHT_HOURS = 999
+const MAX_ADDITIONALLY_HOURS = 999
 
 let saveTimeout
 ;(function () {
@@ -189,6 +197,11 @@ function validateAllInputs() {
     inputHolidayNight.style.border = ''
   }
 
+  inputAdditionally.classList.remove('error')
+  inputAdditionally.style.border = ''
+  inputAdditionallyNight.classList.remove('error')
+  inputAdditionallyNight.style.border = ''
+
   return !hasErrors
 }
 
@@ -235,6 +248,14 @@ function trackCheckbox(checkbox) {
 }
 trackCheckbox(checkboxNight)
 
+function trackCheckbox2(checkbox) {
+  checkbox.addEventListener('change', () => {
+    blockAdditionally.style.display = checkbox.checked ? 'block' : 'none'
+    blockAdditionallyNight.style.display = checkbox.checked ? 'block' : 'none'
+  })
+}
+trackCheckbox2(checkboxAdditionally)
+
 const saveInput1 = () => {
   clearTimeout(saveTimeout)
   saveTimeout = setTimeout(() => {
@@ -253,7 +274,7 @@ window.addEventListener('DOMContentLoaded', loadInput1)
 
 calculatorElem.addEventListener('input', e => {
   if (
-    /^(inputTariff|inputAllShifts|inputNight|inputHoliday|inputHolidayNight|inputFree)$/.test(
+    /^(inputTariff|inputAllShifts|inputNight|inputHoliday|inputHolidayNight|inputFree|inputAdditionally|inputAdditionallyNight)$/.test(
       e.target.dataset.type
     )
   ) {
@@ -273,6 +294,8 @@ const allInputs = [
   inputHoliday,
   inputFree,
   inputHolidayNight,
+  inputAdditionally,
+  inputAdditionallyNight,
 ]
 
 allInputs.forEach(input => {
@@ -347,6 +370,8 @@ const examinationInput = e => {
     if (numericValue > MAX_INPUT1) numericValue = MAX_INPUT1
   } else if (e.target.id === 'input-holiday-night') {
     if (numericValue > MAX_HOLIDAY_NIGHT_HOURS) numericValue = MAX_HOLIDAY_NIGHT_HOURS
+  } else if (e.target.id === 'input-additionally' || e.target.id === 'input-additionally-night') {
+    if (numericValue > MAX_ADDITIONALLY_HOURS) numericValue = MAX_ADDITIONALLY_HOURS
   } else {
     if (numericValue > MAX_INPUT_OTHERS) numericValue = MAX_INPUT_OTHERS
   }
@@ -363,6 +388,8 @@ const allInputsForProtection = [
   inputHoliday,
   inputHolidayNight,
   inputFree,
+  inputAdditionally,
+  inputAdditionallyNight,
 ]
 
 allInputsForProtection.forEach(input => {
@@ -411,7 +438,6 @@ const getNumberValue = input => Number(input.value) || 0
 const markError = input => {
   if (!input) return
   input.classList.remove('error')
-  // Форсируем перерисовку
   void input.offsetHeight
   input.classList.add('error')
   input.style.border = '2px solid red'
@@ -452,13 +478,23 @@ function calculateSalary() {
   if (!validateShifts(totalShifts, nightShifts, holidayShifts, weekendShifts, holidayNightHours))
     return false
 
+  // Доп. часы учитываем только если чекбокс включён.
+  let additionallyHours = 0
+  let additionallyNightHours = 0
+  if (checkboxAdditionally.checked) {
+    additionallyHours = getNumberValue(inputAdditionally)
+    additionallyNightHours = getNumberValue(inputAdditionallyNight)
+  }
+
   calculateValues(
     hourlyRate,
     totalShifts,
     nightShifts,
     holidayShifts,
     weekendShifts,
-    holidayNightHours
+    holidayNightHours,
+    additionallyHours,
+    additionallyNightHours
   )
   renderBlock()
   return true
@@ -525,7 +561,9 @@ function calculateValues(
   nightShifts,
   holidayShifts,
   weekendShifts,
-  holidayNightHours
+  holidayNightHours,
+  additionallyHours = 0,
+  additionallyNightHours = 0
 ) {
   const shiftRate = hourlyRate * HOURS_IN_SHIFT
   const dayShifts = totalShifts - nightShifts
@@ -534,11 +572,56 @@ function calculateValues(
   const nightRate = (shiftRate * NIGHT_PERCENT) / 100
   const nightSalary = (nightRate + shiftRate) * nightShifts
 
+  // === Сборка доп. часов в смены ===
+  let remainingNight = additionallyNightHours
+  let remainingDay = additionallyHours
+
+  let additionalNightShifts = 0
+  let additionalDayShifts = 0
+
+  // 1) полные ночные смены из ночных часов
+  additionalNightShifts += Math.floor(remainingNight / HOURS_IN_SHIFT)
+  remainingNight = remainingNight % HOURS_IN_SHIFT
+
+  // 2) добиваем остаток ночных дневными до полной ночной смены
+  if (remainingNight > 0 && remainingDay > 0) {
+    const need = HOURS_IN_SHIFT - remainingNight
+    const take = Math.min(need, remainingDay)
+    remainingDay -= take
+    remainingNight += take
+    if (remainingNight === HOURS_IN_SHIFT) {
+      additionalNightShifts += 1
+      remainingNight = 0
+    }
+  }
+
+  // 3) полные дневные смены из оставшихся дневных часов
+  additionalDayShifts += Math.floor(remainingDay / HOURS_IN_SHIFT)
+  remainingDay = remainingDay % HOURS_IN_SHIFT
+
+  const additionallyNightHoursPaid =
+    additionallyNightHours +
+    (additionallyHours - remainingDay - additionalDayShifts * HOURS_IN_SHIFT)
+  const additionallyDayHoursPaid =
+    additionallyHours - (additionallyNightHoursPaid - additionallyNightHours)
+
+  let addDaySalary = additionallyDayHoursPaid * hourlyRate
+  let addNightSalary = additionallyNightHoursPaid * hourlyRate * (1 + NIGHT_PERCENT / 100)
+
+  if (checkboxAdvance.checked) {
+    addDaySalary = 0
+    addNightSalary = 0
+  }
+
+  sumAdditionally = addDaySalary
+  sumAdditionallyNight = addNightSalary
+
   let milkCompensation
   if (checkboxAdvance.checked) {
     milkCompensation = 0
   } else {
-    milkCompensation = totalShifts * MILK_COMPENSATION
+    const additionalFullShifts = additionalNightShifts + additionalDayShifts
+    milkCompensation = (totalShifts + additionalFullShifts) * MILK_COMPENSATION
   }
 
   let holidaySalary = holidayShifts * shiftRate
@@ -559,14 +642,29 @@ function calculateValues(
 
   sumNightHoliday = holidayNightInShifts * nightRate
 
-  sum = daySalary + nightSalary + milkCompensation + holidaySalary + weekendSalary + sumNightHoliday
+  // «Доп. начисления» — только выходные смены
+  sumWeekend = weekendSalary
+
+  sum =
+    daySalary +
+    nightSalary +
+    milkCompensation +
+    holidaySalary +
+    weekendSalary +
+    sumNightHoliday +
+    addDaySalary +
+    addNightSalary
+
   const taxableAmount = sum - milkCompensation
   const taxAmount = (taxableAmount * TAX_PERCENT) / 100
   sumClean = sum - taxAmount
   sumNal = taxAmount
-  sumNight = nightRate * nightShifts
+
+  // Ночные = ночная надбавка по сменам + доп. ночные часы
+  sumNight = nightRate * nightShifts + addNightSalary
   sumMilk = milkCompensation
-  sumWeekend = weekendSalary
+
+  // Оклад = база минус ночные, молоко, выходные, праздн. ночные
   sumSalary = sum - sumNight - sumMilk - sumWeekend - sumNightHoliday
   sumHarmfulConditions = (sumSalary * HARMFUL_PERCENT) / 100
   sumSalaryPercent = sumSalary - sumHarmfulConditions
@@ -587,12 +685,17 @@ function clearAll() {
     inputHoliday,
     inputFree,
     inputHolidayNight,
+    inputAdditionally,
+    inputAdditionallyNight,
   ]
 
   uncheckAllCheckboxes(checkboxNight)
   uncheckAllCheckboxes(checkboxAdvance)
+  uncheckAllCheckboxes(checkboxAdditionally)
   checkboxBlock.style.display = 'none'
   checkboxBlockNight.style.display = 'none'
+  blockAdditionally.style.display = 'none'
+  blockAdditionallyNight.style.display = 'none'
 
   if (!inputs || !Array.isArray(inputs)) {
     clearInput1()
@@ -884,5 +987,4 @@ function showInstallButton() {
 // Проверяем, установлено ли приложение
 window.addEventListener('appinstalled', () => {
   console.log('Приложение успешно установлено')
-  // Можно спрятать кнопку установки
 })
