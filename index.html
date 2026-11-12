@@ -150,6 +150,54 @@
             </div>
             <p class="calculator__item__text">Введи кол-во отработаных часов в ночь</p>
           </div>
+
+          <div class="checkbox_item">
+            <div class="calculator__item">
+              <div class="fl">
+                <input type="checkbox" id="checkbox-additionally" class="form-control checkbox" />
+                <label for="checkbox-additionally">Дополнительные часы</label>
+              </div>
+            </div>
+            <p class="calculator__item__text">Нажми если у тебя доп отработанные часы</p>
+          </div>
+
+          <div class="input__block__none" id="input__block__additionally">
+            <div class="calculator__item block__mb">
+              <div class="fl">
+                <img src="img/work.svg" alt="work" width="22px" />
+                <label for="input-holiday-additionally">Доп часы (дневное время)</label>
+              </div>
+              <input
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                class="form-control"
+                placeholder="0"
+                id="input-additionally"
+                data-type="inputAdditionally"
+              />
+            </div>
+            <p class="calculator__item__text">Введи кол-во отработаных часов</p>
+          </div>
+          <div class="input__block__none" id="input__block__additionally__night">
+            <div class="calculator__item block__mb">
+              <div class="fl">
+                <img src="img/night.svg" alt="night" width="22px" />
+                <label for="input-additionally-night">Доп часы (ночное время)</label>
+              </div>
+              <input
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                class="form-control"
+                placeholder="0"
+                id="input-additionally-night"
+                data-type="inputAdditionallyNight"
+              />
+            </div>
+            <p class="calculator__item__text">Введи кол-во отработаных часов</p>
+          </div>
+
           <div class="checkbox_item">
             <div class="calculator__item">
               <div class="fl">
