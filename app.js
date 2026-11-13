@@ -233,9 +233,9 @@ function trackInput(input) {
   input.addEventListener('input', () => {
     const value = parseFloat(input.value)
     if (!isNaN(value) && value > 0) {
-      checkboxBlock.style.display = 'block'
+      showBlock(checkboxBlock)
     } else {
-      checkboxBlock.style.display = 'none'
+      hideBlock(checkboxBlock)
     }
   })
 }
@@ -243,15 +243,24 @@ trackInput(inputHoliday)
 
 function trackCheckbox(checkbox) {
   checkbox.addEventListener('change', () => {
-    checkboxBlockNight.style.display = checkbox.checked ? 'block' : 'none'
+    if (checkbox.checked) {
+      showBlock(checkboxBlockNight)
+    } else {
+      hideBlock(checkboxBlockNight)
+    }
   })
 }
 trackCheckbox(checkboxNight)
 
 function trackCheckbox2(checkbox) {
   checkbox.addEventListener('change', () => {
-    blockAdditionally.style.display = checkbox.checked ? 'block' : 'none'
-    blockAdditionallyNight.style.display = checkbox.checked ? 'block' : 'none'
+    if (checkbox.checked) {
+      showBlock(blockAdditionally)
+      showBlock(blockAdditionallyNight)
+    } else {
+      hideBlock(blockAdditionally)
+      hideBlock(blockAdditionallyNight)
+    }
   })
 }
 trackCheckbox2(checkboxAdditionally)
@@ -434,6 +443,9 @@ allInputsForProtection.forEach(input => {
 })
 
 const getNumberValue = input => Number(input.value) || 0
+
+const showBlock = el => el && el.classList.add('is-visible')
+const hideBlock = el => el && el.classList.remove('is-visible')
 
 const markError = input => {
   if (!input) return
@@ -676,7 +688,7 @@ function uncheckAllCheckboxes(checkbox) {
 }
 
 function clearAll() {
-  blockResult.style.display = 'none'
+  hideBlock(blockResult)
 
   const inputs = [
     inputTariff,
@@ -692,10 +704,10 @@ function clearAll() {
   uncheckAllCheckboxes(checkboxNight)
   uncheckAllCheckboxes(checkboxAdvance)
   uncheckAllCheckboxes(checkboxAdditionally)
-  checkboxBlock.style.display = 'none'
-  checkboxBlockNight.style.display = 'none'
-  blockAdditionally.style.display = 'none'
-  blockAdditionallyNight.style.display = 'none'
+  hideBlock(checkboxBlock)
+  hideBlock(checkboxBlockNight)
+  hideBlock(blockAdditionally)
+  hideBlock(blockAdditionallyNight)
 
   if (!inputs || !Array.isArray(inputs)) {
     clearInput1()
@@ -740,7 +752,7 @@ function renderBlock() {
   if (sumHolidaySalary > 0) {
     additionalBlocks += `
     <div class="fl">
-      <img src="img/santa-claus.svg" alt="nalog" width="20px" height='20px'> Праздничные: 
+      <img src="img/santa-claus.svg" alt="holiday" width="20px" height='20px'> Праздничные: 
       <span class="result-sp">${formatMoney(sumHolidaySalary)}</span>
     </div>`
   }
@@ -748,7 +760,7 @@ function renderBlock() {
   if (sumNightHoliday > 0) {
     additionalBlocks += `
     <div class="fl">
-      <img src="img/zzz.svg" alt="nalog" width="20px" height='20px'> Праздничные ночные: 
+      <img src="img/zzz.svg" alt="holiday-night" width="20px" height='20px'> Праздничные ночные: 
       <span class="result-sp">${formatMoney(sumNightHoliday)}</span>
     </div>`
   }
@@ -782,7 +794,7 @@ function renderBlock() {
     </div>
     ${additionalBlocks}
     <div class="fl">
-    <img src="img/tax.svg" alt="nalog" width="20px"> Сумма налога: 
+    <img src="img/tax.svg" alt="tax" width="20px"> Сумма налога: 
     <span class="result-sp">${formatMoney(sumNal)}</span>
     </div>`
 }
@@ -798,7 +810,7 @@ function renderInput() {
 }
 
 submitBtn.onclick = function () {
-  blockResult.style.display = 'block'
+  showBlock(blockResult)
   calculateSalary()
 }
 
