@@ -497,3 +497,208 @@ input::-moz-placeholder {
   color: var(--blue);
   text-decoration: none;
 }
+
+/* ============================================================
+   АНИМАЦИИ ПОЯВЛЕНИЯ БЛОКОВ
+   ============================================================ */
+
+/* Плавное появление скрытых блоков (доп. часы, ночные праздн., результат) */
+.checkbox__block.is-visible,
+.input__block__none.is-visible,
+#block--result.is-visible {
+  display: block;
+  animation: blockIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes blockIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Каскадное появление строк результата */
+#block--result > * {
+  opacity: 0;
+  animation: rowIn 0.4s ease forwards;
+}
+
+#block--result > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+#block--result > *:nth-child(2) {
+  animation-delay: 0.1s;
+}
+#block--result > *:nth-child(3) {
+  animation-delay: 0.15s;
+}
+#block--result > *:nth-child(4) {
+  animation-delay: 0.2s;
+}
+#block--result > *:nth-child(5) {
+  animation-delay: 0.25s;
+}
+#block--result > *:nth-child(6) {
+  animation-delay: 0.3s;
+}
+#block--result > *:nth-child(7) {
+  animation-delay: 0.35s;
+}
+#block--result > *:nth-child(8) {
+  animation-delay: 0.4s;
+}
+#block--result > *:nth-child(9) {
+  animation-delay: 0.45s;
+}
+#block--result > *:nth-child(10) {
+  animation-delay: 0.5s;
+}
+
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Лёгкий «пульс» основной суммы зарплаты */
+.result-sp-fs span {
+  display: inline-block;
+  animation: resultPulse 0.8s ease 0.35s both;
+}
+
+@keyframes resultPulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   КНОПКИ
+   ============================================================ */
+.btn {
+  position: relative;
+  overflow: hidden;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.15s ease,
+    box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+.btn:hover {
+  box-shadow: 0 6px 16px rgba(22, 104, 227, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 2px 6px rgba(22, 104, 227, 0.2);
+}
+
+/* ============================================================
+   ЧЕКБОКСЫ
+   ============================================================ */
+.checkbox {
+  accent-color: var(--dark-blue);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.checkbox:active {
+  transform: scale(0.88);
+}
+
+.checkbox:checked {
+  animation: checkPop 0.25s ease;
+}
+
+@keyframes checkPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ============================================================
+   ПОЛЯ ВВОДА
+   ============================================================ */
+.form-control {
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.form-control:hover:not(:focus):not(.error) {
+  border-color: #8c959c;
+  background-color: #fafcff;
+}
+
+/* ============================================================
+   ЗАГОЛОВОК И ПОДВАЛ
+   ============================================================ */
+.title {
+  animation: titleIn 0.6s ease both;
+}
+
+@keyframes titleIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer__link {
+  display: inline-block;
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.footer__link:hover {
+  color: var(--dark-blue);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   ДОСТУПНОСТЬ: уважение к prefers-reduced-motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
