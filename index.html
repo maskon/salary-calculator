@@ -194,6 +194,23 @@
               />
             </div>
             <p class="calculator__item__text">Введи кол-во отработаных часов</p>
+            <div class="help-wrapper" id="help-wrapper">
+              <button
+                type="button"
+                class="help-btn"
+                id="help-btn"
+                aria-label="Пояснение по расчёту доп. часов"
+                aria-expanded="false"
+                aria-controls="help-tooltip"
+              >
+                ?
+              </button>
+              <div class="help-tooltip" id="help-tooltip" role="tooltip">
+                Если ночных доп. часов меньше 8, они добиваются дневными до полной смены. Такая
+                смена считается ночной и оплачивается по ночному тарифу (ставка + 40%). Остаток
+                дневных часов собирается в дневные смены.
+              </div>
+            </div>
           </div>
 
           <div class="checkbox_item">

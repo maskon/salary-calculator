@@ -17,6 +17,8 @@ const cleanInput = document.getElementById('clean')
 const blockResult = document.getElementById('block--result')
 const checkboxBlock = document.getElementById('checkbox__block')
 const checkboxBlockNight = document.getElementById('checkbox__block__night')
+const helpWrapper = document.getElementById('help-wrapper')
+const helpBtn = document.getElementById('help-btn')
 
 let sum,
   sumSalary,
@@ -351,10 +353,92 @@ function trackCheckbox2(checkbox) {
     } else {
       hideBlock(blockAdditionally)
       hideBlock(blockAdditionallyNight)
+      closeHelpTooltip() // ← добавить
     }
   })
 }
 trackCheckbox2(checkboxAdditionally)
+
+// === Подсказка «?» под блоком доп. часов ===
+const isHoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+
+function openHelpTooltip() {
+  if (!helpWrapper || !helpBtn) return
+  helpWrapper.classList.add('is-open')
+  helpBtn.setAttribute('aria-expanded', 'true')
+}
+
+function closeHelpTooltip() {
+  if (!helpWrapper || !helpBtn) return
+  helpWrapper.classList.remove('is-open')
+  helpBtn.setAttribute('aria-expanded', 'false')
+}
+
+function toggleHelpTooltip() {
+  if (!helpWrapper) return
+  if (helpWrapper.classList.contains('is-open')) {
+    closeHelpTooltip()
+  } else {
+    openHelpTooltip()
+  }
+}
+
+if (helpWrapper && helpBtn) {
+  if (isHoverCapable) {
+    // Десктоп: hover + focus
+    helpWrapper.addEventListener('mouseenter', openHelpTooltip)
+    helpWrapper.addEventListener('mouseleave', closeHelpTooltip)
+    helpBtn.addEventListener('focus', openHelpTooltip)
+    helpBtn.addEventListener('blur', closeHelpTooltip)
+  } else {
+    // Мобила: клик по кнопке — toggle, клик вне — закрыть
+    helpBtn.addEventListener('click', e => {
+      e.stopPropagation()
+      e.preventDefault()
+      toggleHelpTooltip()
+      // Принудительно снимаем фокус и hover-состояние
+      helpBtn.blur()
+      helpBtn.classList.remove('is-pressed')
+    })
+
+    // Добавим короткое «нажатие» через класс, чтобы не зависеть от :active
+    helpBtn.addEventListener(
+      'touchstart',
+      () => {
+        helpBtn.classList.add('is-pressed')
+      },
+      { passive: true }
+    )
+
+    helpBtn.addEventListener(
+      'touchend',
+      () => {
+        setTimeout(() => helpBtn.classList.remove('is-pressed'), 120)
+      },
+      { passive: true }
+    )
+
+    // Клик по тултипу не должен закрывать подсказку
+    // и не должен «проваливаться» до document
+    const tooltipEl = helpWrapper.querySelector('.help-tooltip')
+    if (tooltipEl) {
+      tooltipEl.addEventListener('click', e => e.stopPropagation())
+    }
+
+    document.addEventListener(
+      'click',
+      e => {
+        if (!helpWrapper.contains(e.target)) closeHelpTooltip()
+      },
+      true // capture-фаза: срабатывает раньше, но не мешает toggle
+    )
+  }
+
+  // Escape закрывает на любом устройстве
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeHelpTooltip()
+  })
+}
 
 // === Сохранение / восстановление (пункт 11) ===
 let saveTimeout
@@ -496,10 +580,7 @@ const examinationInput = e => {
     if (numericValue > MAX_INPUT1) numericValue = MAX_INPUT1
   } else if (e.target.id === 'input-holiday-night') {
     if (numericValue > MAX_HOLIDAY_NIGHT_HOURS) numericValue = MAX_HOLIDAY_NIGHT_HOURS
-  } else if (
-    e.target.id === 'input-additionally' ||
-    e.target.id === 'input-additionally-night'
-  ) {
+  } else if (e.target.id === 'input-additionally' || e.target.id === 'input-additionally-night') {
     if (numericValue > MAX_ADDITIONALLY_HOURS) numericValue = MAX_ADDITIONALLY_HOURS
   } else {
     if (numericValue > MAX_INPUT_OTHERS) numericValue = MAX_INPUT_OTHERS
@@ -736,8 +817,7 @@ function calculateValues(
     additionallyHours - (additionallyNightHoursPaid - additionallyNightHours)
 
   let addDaySalary = additionallyDayHoursPaid * hourlyRate
-  let addNightSalary =
-    additionallyNightHoursPaid * hourlyRate * (1 + NIGHT_PERCENT / 100)
+  let addNightSalary = additionallyNightHoursPaid * hourlyRate * (1 + NIGHT_PERCENT / 100)
 
   if (checkboxAdvance.checked) {
     addDaySalary = 0
@@ -828,6 +908,7 @@ function clearAll() {
   hideBlock(checkboxBlockNight)
   hideBlock(blockAdditionally)
   hideBlock(blockAdditionallyNight)
+  closeHelpTooltip()
 
   if (!inputs || !Array.isArray(inputs)) {
     clearInput1()
