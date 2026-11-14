@@ -44,7 +44,117 @@ const MAX_INPUT_OTHERS = 99
 const MAX_HOLIDAY_NIGHT_HOURS = 999
 const MAX_ADDITIONALLY_HOURS = 999
 
-let saveTimeout
+// === Лимиты длины ввода (пункт 12) ===
+const MAX_LENGTHS = {
+  'input-tariff': 4,
+  'input-all-shifts': 2,
+  'input-night': 2,
+  'input-holiday': 2,
+  'input-free': 2,
+  'input-holiday-night': 3,
+  'input-additionally': 3,
+  'input-additionally-night': 3,
+}
+Object.entries(MAX_LENGTHS).forEach(([id, len]) => {
+  const el = document.getElementById(id)
+  if (el) el.setAttribute('maxlength', len)
+})
+
+// === Хелперы видимости блоков (плавное появление) ===
+const showBlock = el => el && el.classList.add('is-visible')
+const hideBlock = el => el && el.classList.remove('is-visible')
+
+// === Тост-уведомления (пункт 11) ===
+function ensureToast() {
+  let toast = document.getElementById('toast')
+  if (!toast) {
+    toast = document.createElement('div')
+    toast.id = 'toast'
+    toast.className = 'toast'
+    document.body.appendChild(toast)
+  }
+  return toast
+}
+
+function showToast(message, color = '#3d9950') {
+  const toast = ensureToast()
+  toast.textContent = message
+  toast.style.background = color
+  void toast.offsetHeight
+  toast.classList.add('show')
+  clearTimeout(toast._hideTimer)
+  toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 1800)
+}
+
+function showToastWhenReady(message, color = '#3d9950') {
+  const attempt = () => {
+    if (document.body.classList.contains('pwa-loaded')) {
+      showToast(message, color)
+    } else {
+      setTimeout(attempt, 200)
+    }
+  }
+  attempt()
+}
+
+// === Копирование результата (пункт 7) ===
+function copyResult() {
+  if (sum == null) return
+
+  const text = [
+    `Зарплата: ${formatMoney(sumClean)}`,
+    `Начислено: ${formatMoney(sum)}`,
+    `Оклад: ${formatMoney(sumSalaryPercent)}`,
+    `Налог: ${formatMoney(sumNal)}`,
+  ].join('\n')
+
+  const onCopied = () => {
+    const btn = blockResult.querySelector('.copy-result-btn')
+    if (!btn) return
+    const original = btn.textContent
+    btn.textContent = '✓ Скопировано'
+    setTimeout(() => {
+      if (btn) btn.textContent = original
+    }, 1500)
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard
+      .writeText(text)
+      .then(onCopied)
+      .catch(() => {
+        fallbackCopy(text)
+        onCopied()
+      })
+  } else {
+    fallbackCopy(text)
+    onCopied()
+  }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea')
+  ta.value = text
+  ta.style.position = 'fixed'
+  ta.style.opacity = '0'
+  document.body.appendChild(ta)
+  ta.select()
+  try {
+    document.execCommand('copy')
+  } catch (e) {
+    /* noop */
+  }
+  document.body.removeChild(ta)
+}
+
+// Делегирование клика по кнопке «Скопировать»
+blockResult.addEventListener('click', e => {
+  if (e.target.closest('.copy-result-btn')) {
+    copyResult()
+  }
+})
+
+// === IIFE: лоадер ===
 ;(function () {
   document.addEventListener('DOMContentLoaded', function () {
     const appContent = document.getElementById('app-content')
@@ -59,7 +169,6 @@ let saveTimeout
 
     function hideLoader() {
       if (!loader) return
-
       loader.style.opacity = '0'
 
       setTimeout(function () {
@@ -138,6 +247,7 @@ let saveTimeout
   })
 })()
 
+// === Валидация ===
 function validateAllInputs() {
   const hourlyRate = getNumberValue(inputTariff)
   const totalShifts = getNumberValue(inputAllShifts)
@@ -148,59 +258,46 @@ function validateAllInputs() {
 
   let hasErrors = false
 
-  // Проверяем обязательные поля
   if (!hourlyRate || !totalShifts) {
     if (!hourlyRate) markError(inputTariff)
     if (!totalShifts) markError(inputAllShifts)
     hasErrors = true
   } else {
     inputTariff.classList.remove('error')
-    inputTariff.style.border = ''
     inputAllShifts.classList.remove('error')
-    inputAllShifts.style.border = ''
   }
 
-  // Проверяем ночные смены
   if (nightShifts > totalShifts) {
     markError(inputNight)
     hasErrors = true
   } else {
     inputNight.classList.remove('error')
-    inputNight.style.border = ''
   }
 
-  // Проверяем праздничные смены
   if (holidayShifts > totalShifts) {
     markError(inputHoliday)
     hasErrors = true
   } else {
     inputHoliday.classList.remove('error')
-    inputHoliday.style.border = ''
   }
 
-  // Проверяем выходные смены
   if (weekendShifts > totalShifts) {
     markError(inputFree)
     hasErrors = true
   } else {
     inputFree.classList.remove('error')
-    inputFree.style.border = ''
   }
 
-  // Проверяем праздничные ночные часы
   const maxHolidayNightHours = holidayShifts * 8
   if (holidayNightHours > maxHolidayNightHours) {
     markError(inputHolidayNight)
     hasErrors = true
   } else {
     inputHolidayNight.classList.remove('error')
-    inputHolidayNight.style.border = ''
   }
 
   inputAdditionally.classList.remove('error')
-  inputAdditionally.style.border = ''
   inputAdditionallyNight.classList.remove('error')
-  inputAdditionallyNight.style.border = ''
 
   return !hasErrors
 }
@@ -216,19 +313,13 @@ function validateInputs() {
     return false
   }
 
-  // Снимаем ошибку, если поля заполнены
-  if (hourlyRate) {
-    inputTariff.classList.remove('error')
-    inputTariff.style.border = ''
-  }
-  if (totalShifts) {
-    inputAllShifts.classList.remove('error')
-    inputAllShifts.style.border = ''
-  }
+  if (hourlyRate) inputTariff.classList.remove('error')
+  if (totalShifts) inputAllShifts.classList.remove('error')
 
   return true
 }
 
+// === Трекинг видимости блоков ===
 function trackInput(input) {
   input.addEventListener('input', () => {
     const value = parseFloat(input.value)
@@ -265,22 +356,38 @@ function trackCheckbox2(checkbox) {
 }
 trackCheckbox2(checkboxAdditionally)
 
+// === Сохранение / восстановление (пункт 11) ===
+let saveTimeout
+let lastSavedTariff = null
+
 const saveInput1 = () => {
   clearTimeout(saveTimeout)
   saveTimeout = setTimeout(() => {
-    localStorage.setItem(STORAGE_KEY_INPUT1, inputTariff.value)
+    const value = inputTariff.value
+    if (value === lastSavedTariff) return
+    lastSavedTariff = value
+    localStorage.setItem(STORAGE_KEY_INPUT1, value)
+    if (value !== '') showToast('✓ Сохранено')
   }, 500)
 }
 
 const loadInput1 = () => {
   const saved = localStorage.getItem(STORAGE_KEY_INPUT1)
-  if (saved !== null) inputTariff.value = saved
+  if (saved !== null && saved !== '') {
+    inputTariff.value = saved
+    lastSavedTariff = saved
+    showToastWhenReady('Данные восстановлены', '#1668e3')
+  }
 }
 
-const clearInput1 = () => localStorage.removeItem(STORAGE_KEY_INPUT1)
+const clearInput1 = () => {
+  localStorage.removeItem(STORAGE_KEY_INPUT1)
+  lastSavedTariff = null
+}
 
 window.addEventListener('DOMContentLoaded', loadInput1)
 
+// === Обработка ввода ===
 calculatorElem.addEventListener('input', e => {
   if (
     /^(inputTariff|inputAllShifts|inputNight|inputHoliday|inputHolidayNight|inputFree|inputAdditionally|inputAdditionallyNight)$/.test(
@@ -289,10 +396,7 @@ calculatorElem.addEventListener('input', e => {
   ) {
     examinationInput(e)
     if (e.target.dataset.type === 'inputTariff') saveInput1()
-
-    // Убираем ошибку только с текущего инпута, так как пользователь начал его исправлять
     e.target.classList.remove('error')
-    e.target.style.border = ''
   }
 })
 
@@ -307,11 +411,25 @@ const allInputs = [
   inputAdditionallyNight,
 ]
 
+function clearAllInputErrors() {
+  allInputs.forEach(input => {
+    if (input) input.classList.remove('error')
+  })
+}
+
 allInputs.forEach(input => {
   if (input) {
     input.addEventListener('blur', () => {
       validateAllInputs()
     })
+  }
+})
+
+// === Enter → расчёт (пункт 8) ===
+calculatorElem.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.matches('input')) {
+    e.preventDefault()
+    submitBtn.click()
   }
 })
 
@@ -374,12 +492,14 @@ const examinationInput = e => {
     return ''
   }
 
-  // Определяем максимальное значение по id элемента
   if (e.target.id === 'input-tariff') {
     if (numericValue > MAX_INPUT1) numericValue = MAX_INPUT1
   } else if (e.target.id === 'input-holiday-night') {
     if (numericValue > MAX_HOLIDAY_NIGHT_HOURS) numericValue = MAX_HOLIDAY_NIGHT_HOURS
-  } else if (e.target.id === 'input-additionally' || e.target.id === 'input-additionally-night') {
+  } else if (
+    e.target.id === 'input-additionally' ||
+    e.target.id === 'input-additionally-night'
+  ) {
     if (numericValue > MAX_ADDITIONALLY_HOURS) numericValue = MAX_ADDITIONALLY_HOURS
   } else {
     if (numericValue > MAX_INPUT_OTHERS) numericValue = MAX_INPUT_OTHERS
@@ -389,7 +509,6 @@ const examinationInput = e => {
   return e.target.value
 }
 
-// Защита от вставки текста с буквами
 const allInputsForProtection = [
   inputTariff,
   inputAllShifts,
@@ -404,7 +523,6 @@ const allInputsForProtection = [
 allInputsForProtection.forEach(input => {
   if (input) {
     input.addEventListener('keydown', e => {
-      // Разрешаем: Backspace, Delete, Tab, Escape, Enter, стрелки, Home, End
       if (
         e.key === 'Backspace' ||
         e.key === 'Delete' ||
@@ -421,13 +539,11 @@ allInputsForProtection.forEach(input => {
         return
       }
 
-      // Запрещаем ввод букв и символов (разрешаем только цифры)
       if (!/^\d$/.test(e.key)) {
         e.preventDefault()
       }
     })
 
-    // Защита от вставки
     input.addEventListener('paste', e => {
       const pastedText = (e.clipboardData || window.clipboardData).getData('text')
       if (!/^\d+$/.test(pastedText)) {
@@ -444,15 +560,11 @@ allInputsForProtection.forEach(input => {
 
 const getNumberValue = input => Number(input.value) || 0
 
-const showBlock = el => el && el.classList.add('is-visible')
-const hideBlock = el => el && el.classList.remove('is-visible')
-
 const markError = input => {
   if (!input) return
   input.classList.remove('error')
   void input.offsetHeight
   input.classList.add('error')
-  input.style.border = '2px solid red'
 }
 
 const capitalizeFirst = str => str.charAt(0).toUpperCase() + str.slice(1)
@@ -473,8 +585,9 @@ const formatMoney = amount =>
     maximumFractionDigits: 2,
   }) + ' ₽'
 
+// === Основной расчёт ===
 function calculateSalary() {
-  renderInput()
+  clearAllInputErrors()
 
   if (!validateInputs()) return false
 
@@ -490,7 +603,6 @@ function calculateSalary() {
   if (!validateShifts(totalShifts, nightShifts, holidayShifts, weekendShifts, holidayNightHours))
     return false
 
-  // Доп. часы учитываем только если чекбокс включён.
   let additionallyHours = 0
   let additionallyNightHours = 0
   if (checkboxAdditionally.checked) {
@@ -561,10 +673,14 @@ function showValidationErrors() {
   }
 }
 
+// === Правильные склонения (пункт 2) ===
 function getPluralEnding(num) {
-  if (num === 1) return 'е'
-  if (num >= 2 && num <= 99) return 'ах'
-  return 'ах'
+  const n = Math.abs(num) % 100
+  const n1 = n % 10
+  if (n > 10 && n < 20) return '' // 11–19 смен
+  if (n1 === 1) return 'а' // 1 смена
+  if (n1 >= 2 && n1 <= 4) return 'ы' // 2–4 смены
+  return '' // 0, 5–20, 25… смен
 }
 
 function calculateValues(
@@ -585,17 +701,18 @@ function calculateValues(
   const nightSalary = (nightRate + shiftRate) * nightShifts
 
   // === Сборка доп. часов в смены ===
+  // 1) Ночные часы собираем в полные ночные смены
+  // 2) Остаток ночных добиваем дневными → ещё одна ночная смена
+  // 3) Оставшиеся дневные собираем в дневные смены
   let remainingNight = additionallyNightHours
   let remainingDay = additionallyHours
 
   let additionalNightShifts = 0
   let additionalDayShifts = 0
 
-  // 1) полные ночные смены из ночных часов
   additionalNightShifts += Math.floor(remainingNight / HOURS_IN_SHIFT)
   remainingNight = remainingNight % HOURS_IN_SHIFT
 
-  // 2) добиваем остаток ночных дневными до полной ночной смены
   if (remainingNight > 0 && remainingDay > 0) {
     const need = HOURS_IN_SHIFT - remainingNight
     const take = Math.min(need, remainingDay)
@@ -607,10 +724,11 @@ function calculateValues(
     }
   }
 
-  // 3) полные дневные смены из оставшихся дневных часов
   additionalDayShifts += Math.floor(remainingDay / HOURS_IN_SHIFT)
   remainingDay = remainingDay % HOURS_IN_SHIFT
 
+  // === Оплата доп. часов ===
+  // Добитые дневные часы оплачиваются по ночному тарифу
   const additionallyNightHoursPaid =
     additionallyNightHours +
     (additionallyHours - remainingDay - additionalDayShifts * HOURS_IN_SHIFT)
@@ -618,7 +736,8 @@ function calculateValues(
     additionallyHours - (additionallyNightHoursPaid - additionallyNightHours)
 
   let addDaySalary = additionallyDayHoursPaid * hourlyRate
-  let addNightSalary = additionallyNightHoursPaid * hourlyRate * (1 + NIGHT_PERCENT / 100)
+  let addNightSalary =
+    additionallyNightHoursPaid * hourlyRate * (1 + NIGHT_PERCENT / 100)
 
   if (checkboxAdvance.checked) {
     addDaySalary = 0
@@ -628,6 +747,7 @@ function calculateValues(
   sumAdditionally = addDaySalary
   sumAdditionallyNight = addNightSalary
 
+  // === Молоко: за обычные смены + за каждую полную доп. смену ===
   let milkCompensation
   if (checkboxAdvance.checked) {
     milkCompensation = 0
@@ -672,11 +792,10 @@ function calculateValues(
   sumClean = sum - taxAmount
   sumNal = taxAmount
 
-  // Ночные = ночная надбавка по сменам + доп. ночные часы
+  // Ночные = ночная надбавка по сменам + доп. ночные часы (включая добитые)
   sumNight = nightRate * nightShifts + addNightSalary
   sumMilk = milkCompensation
 
-  // Оклад = база минус ночные, молоко, выходные, праздн. ночные
   sumSalary = sum - sumNight - sumMilk - sumWeekend - sumNightHoliday
   sumHarmfulConditions = (sumSalary * HARMFUL_PERCENT) / 100
   sumSalaryPercent = sumSalary - sumHarmfulConditions
@@ -689,6 +808,7 @@ function uncheckAllCheckboxes(checkbox) {
 
 function clearAll() {
   hideBlock(blockResult)
+  clearAllInputErrors()
 
   const inputs = [
     inputTariff,
@@ -717,8 +837,6 @@ function clearAll() {
   inputs.forEach((input, index) => {
     if (input && typeof input === 'object') {
       input.value = ''
-      input.classList.remove('error')
-      input.style.border = ''
     } else {
       console.warn(`Инпут ${index + 1} не найден:`, input)
     }
@@ -732,7 +850,6 @@ function renderBlock() {
 
   let additionalBlocks = ''
 
-  // Добавляем блоки только если значения > 0
   if (sumNight > 0) {
     additionalBlocks += `
     <div class="fl">
@@ -752,7 +869,7 @@ function renderBlock() {
   if (sumHolidaySalary > 0) {
     additionalBlocks += `
     <div class="fl">
-      <img src="img/santa-claus.svg" alt="holiday" width="20px" height='20px'> Праздничные: 
+      <img src="img/santa-claus.svg" alt="nalog" width="20px" height='20px'> Праздничные: 
       <span class="result-sp">${formatMoney(sumHolidaySalary)}</span>
     </div>`
   }
@@ -760,7 +877,7 @@ function renderBlock() {
   if (sumNightHoliday > 0) {
     additionalBlocks += `
     <div class="fl">
-      <img src="img/zzz.svg" alt="holiday-night" width="20px" height='20px'> Праздничные ночные: 
+      <img src="img/zzz.svg" alt="nalog" width="20px" height='20px'> Праздничные ночные: 
       <span class="result-sp">${formatMoney(sumNightHoliday)}</span>
     </div>`
   }
@@ -794,27 +911,19 @@ function renderBlock() {
     </div>
     ${additionalBlocks}
     <div class="fl">
-    <img src="img/tax.svg" alt="tax" width="20px"> Сумма налога: 
+    <img src="img/tax.svg" alt="nalog" width="20px"> Сумма налога: 
     <span class="result-sp">${formatMoney(sumNal)}</span>
-    </div>`
+    </div>
+    <button type="button" class="copy-result-btn">📋 Скопировать результат</button>`
 }
 
-function renderInput() {
-  const inputs = [inputTariff, inputAllShifts, inputNight, inputHoliday, inputFree]
-
-  inputs.forEach(input => {
-    if (!input) return
-    input.classList.remove('error')
-    input.style.border = ''
-  })
-}
-
-submitBtn.onclick = function () {
+// === Кнопки (пункт 14) ===
+submitBtn.addEventListener('click', function () {
   showBlock(blockResult)
   calculateSalary()
-}
+})
 
-cleanInput.onclick = clearAll
+cleanInput.addEventListener('click', clearAll)
 
 setTimeout(function () {
   const loader = document.getElementById('pwa-loader')
@@ -830,10 +939,9 @@ setTimeout(function () {
   }
 }, 10000)
 
-// Регистрация Service Worker с проверкой путей
+// === Service Worker ===
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // Определяем путь для GitHub Pages
     const isGitHubPages = window.location.hostname.includes('github.io')
     let swPath = '/sw.js'
 
@@ -841,7 +949,6 @@ if ('serviceWorker' in navigator) {
       const path = window.location.pathname
       const pathParts = path.split('/')
 
-      // Если в пути есть имя репозитория
       if (pathParts.length > 2) {
         swPath = '/' + pathParts[1] + '/sw.js'
       }
@@ -854,14 +961,12 @@ if ('serviceWorker' in navigator) {
       .then(registration => {
         console.log('Service Worker успешно зарегистрирован:', registration.scope)
 
-        // Проверяем обновления
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing
 
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
               console.log('Доступна новая версия приложения')
-              // Можно показать уведомление пользователю
             }
           })
         })
@@ -869,11 +974,9 @@ if ('serviceWorker' in navigator) {
       .catch(error => {
         console.log('Ошибка регистрации Service Worker:', error)
 
-        // Fallback для GitHub Pages
         if (isGitHubPages && error.message.includes('404')) {
           console.log('Пробуем альтернативный путь...')
 
-          // Пробуем другой путь
           const altSwPath = '/salary-calculator/sw.js'
           navigator.serviceWorker
             .register(altSwPath)
@@ -886,14 +989,12 @@ if ('serviceWorker' in navigator) {
   })
 }
 
+// === Установка PWA ===
 let deferredPrompt
 
 window.addEventListener('beforeinstallprompt', e => {
-  // Предотвращаем автоматическое показ баннера
   e.preventDefault()
   deferredPrompt = e
-
-  // Показываем свою кнопку установки
   showInstallButton()
 })
 
@@ -905,7 +1006,6 @@ function showInstallButton() {
   )
   const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent)
 
-  // На iOS показываем другое сообщение
   let buttonText = isMobile ? '📱 Установить' : '➕ Установить приложение'
   if (isIOS) {
     buttonText = '📲 Добавить на главный экран'
@@ -915,7 +1015,6 @@ function showInstallButton() {
   installBtn.textContent = buttonText
   installBtn.className = 'install-btn'
 
-  // Базовые стили
   installBtn.style.cssText = `
         position: fixed;
         bottom: ${isMobile ? '100px' : '30px'};
@@ -940,7 +1039,6 @@ function showInstallButton() {
 
   installBtn.addEventListener('click', async () => {
     if (isIOS) {
-      // На iOS показываем инструкцию
       alert(
         'Для установки приложения:\n1. Нажмите кнопку "Поделиться"\n2. Выберите "На экран «Домой»"\n3. Нажмите "Добавить"'
       )
@@ -977,13 +1075,11 @@ function showInstallButton() {
 
   document.body.appendChild(installBtn)
 
-  // Плавное появление
   setTimeout(() => {
     installBtn.style.opacity = '1'
     installBtn.style.transform = 'translateY(0)'
   }, 100)
 
-  // Автоматическое скрытие через 15 секунд
   setTimeout(() => {
     if (installBtn.parentNode) {
       installBtn.style.opacity = '0'
@@ -996,7 +1092,6 @@ function showInstallButton() {
   }, 10000)
 }
 
-// Проверяем, установлено ли приложение
 window.addEventListener('appinstalled', () => {
   console.log('Приложение успешно установлено')
 })
