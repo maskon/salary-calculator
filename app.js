@@ -97,7 +97,7 @@ function showErrorToast(message) {
   toast.style.background = 'rgba(200, 40, 40, 0.95)'
   toast.style.whiteSpace = 'normal'
   toast.style.textAlign = 'left'
-  toast.style.maxWidth = 'min(360px, 90vw)'
+  toast.style.maxWidth = 'min(420px, calc(100vw - 16px))'
   void toast.offsetHeight
   toast.classList.add('show')
   clearTimeout(toast._hideTimer)
