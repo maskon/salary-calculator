@@ -46,7 +46,7 @@ const MAX_INPUT_OTHERS = 99
 const MAX_HOLIDAY_NIGHT_HOURS = 999
 const MAX_ADDITIONALLY_HOURS = 999
 
-// === Лимиты длины ввода (пункт 12) ===
+// === Лимиты длины ввода ===
 const MAX_LENGTHS = {
   'input-tariff': 4,
   'input-all-shifts': 2,
@@ -62,11 +62,11 @@ Object.entries(MAX_LENGTHS).forEach(([id, len]) => {
   if (el) el.setAttribute('maxlength', len)
 })
 
-// === Хелперы видимости блоков (плавное появление) ===
+// === Хелперы видимости блоков ===
 const showBlock = el => el && el.classList.add('is-visible')
 const hideBlock = el => el && el.classList.remove('is-visible')
 
-// === Тост-уведомления (пункт 11) ===
+// === Тост-уведомления ===
 function ensureToast() {
   let toast = document.getElementById('toast')
   if (!toast) {
@@ -78,14 +78,35 @@ function ensureToast() {
   return toast
 }
 
-function showToast(message, color = '#3d9950') {
+function showToast(message, color = '#3d9950', duration = 1800) {
   const toast = ensureToast()
   toast.textContent = message
   toast.style.background = color
+  toast.style.whiteSpace = ''
+  toast.style.textAlign = ''
+  toast.style.maxWidth = ''
   void toast.offsetHeight
   toast.classList.add('show')
   clearTimeout(toast._hideTimer)
-  toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 1800)
+  toast._hideTimer = setTimeout(() => toast.classList.remove('show'), duration)
+}
+
+function showErrorToast(message) {
+  const toast = ensureToast()
+  toast.textContent = capitalizeFirst(message)
+  toast.style.background = 'rgba(200, 40, 40, 0.95)'
+  toast.style.whiteSpace = 'normal'
+  toast.style.textAlign = 'left'
+  toast.style.maxWidth = 'min(360px, 90vw)'
+  void toast.offsetHeight
+  toast.classList.add('show')
+  clearTimeout(toast._hideTimer)
+  toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 3200)
+}
+
+function hideToast() {
+  const toast = document.getElementById('toast')
+  if (toast) toast.classList.remove('show')
 }
 
 function showToastWhenReady(message, color = '#3d9950') {
@@ -99,7 +120,65 @@ function showToastWhenReady(message, color = '#3d9950') {
   attempt()
 }
 
-// === Копирование результата (пункт 7) ===
+// === Звук ошибки (Web Audio API, без файлов) ===
+let audioCtx = null
+
+function playErrorSound() {
+  try {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext
+      if (!AC) return
+      audioCtx = new AC()
+    }
+
+    // Некоторые браузеры держат контекст в состоянии 'suspended'
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(() => {})
+    }
+
+    const now = audioCtx.currentTime
+
+    // Два коротких нисходящих тона — «уип-уип»
+    const tones = [
+      { freq: 520, start: 0, dur: 0.1 },
+      { freq: 380, start: 0.12, dur: 0.14 },
+    ]
+
+    tones.forEach(({ freq, start, dur }) => {
+      const osc = audioCtx.createOscillator()
+      const gain = audioCtx.createGain()
+
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(freq, now + start)
+
+      // Плавное затухание, чтобы не было резкого «щелчка» в конце
+      gain.gain.setValueAtTime(0.0001, now + start)
+      gain.gain.exponentialRampToValueAtTime(0.18, now + start + 0.01)
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + start + dur)
+
+      osc.connect(gain)
+      gain.connect(audioCtx.destination)
+
+      osc.start(now + start)
+      osc.stop(now + start + dur + 0.02)
+    })
+  } catch (e) {
+    // Звук — необязательная функция, молча игнорируем ошибку
+  }
+}
+
+// === Вибрация ошибки ===
+function vibrateError() {
+  if (navigator.vibrate) {
+    try {
+      navigator.vibrate([80, 40, 80])
+    } catch (e) {
+      /* noop */
+    }
+  }
+}
+
+// === Копирование результата ===
 function copyResult() {
   if (sum == null) return
 
@@ -149,7 +228,6 @@ function fallbackCopy(text) {
   document.body.removeChild(ta)
 }
 
-// Делегирование клика по кнопке «Скопировать»
 blockResult.addEventListener('click', e => {
   if (e.target.closest('.copy-result-btn')) {
     copyResult()
@@ -353,7 +431,7 @@ function trackCheckbox2(checkbox) {
     } else {
       hideBlock(blockAdditionally)
       hideBlock(blockAdditionallyNight)
-      closeHelpTooltip() // ← добавить
+      closeHelpTooltip()
     }
   })
 }
@@ -391,56 +469,24 @@ if (helpWrapper && helpBtn) {
     helpBtn.addEventListener('focus', openHelpTooltip)
     helpBtn.addEventListener('blur', closeHelpTooltip)
   } else {
-    // Мобила: клик по кнопке — toggle, клик вне — закрыть
+    // Мобила: открыть по клику на кнопку, закрыть по клику вне области
     helpBtn.addEventListener('click', e => {
       e.stopPropagation()
       e.preventDefault()
-      toggleHelpTooltip()
-      // Принудительно снимаем фокус и hover-состояние
-      helpBtn.blur()
-      helpBtn.classList.remove('is-pressed')
+      openHelpTooltip()
     })
 
-    // Добавим короткое «нажатие» через класс, чтобы не зависеть от :active
-    helpBtn.addEventListener(
-      'touchstart',
-      () => {
-        helpBtn.classList.add('is-pressed')
-      },
-      { passive: true }
-    )
-
-    helpBtn.addEventListener(
-      'touchend',
-      () => {
-        setTimeout(() => helpBtn.classList.remove('is-pressed'), 120)
-      },
-      { passive: true }
-    )
-
-    // Клик по тултипу не должен закрывать подсказку
-    // и не должен «проваливаться» до document
-    const tooltipEl = helpWrapper.querySelector('.help-tooltip')
-    if (tooltipEl) {
-      tooltipEl.addEventListener('click', e => e.stopPropagation())
-    }
-
-    document.addEventListener(
-      'click',
-      e => {
-        if (!helpWrapper.contains(e.target)) closeHelpTooltip()
-      },
-      true // capture-фаза: срабатывает раньше, но не мешает toggle
-    )
+    document.addEventListener('click', e => {
+      if (!helpWrapper.contains(e.target)) closeHelpTooltip()
+    })
   }
 
-  // Escape закрывает на любом устройстве
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeHelpTooltip()
   })
 }
 
-// === Сохранение / восстановление (пункт 11) ===
+// === Сохранение / восстановление ===
 let saveTimeout
 let lastSavedTariff = null
 
@@ -481,6 +527,7 @@ calculatorElem.addEventListener('input', e => {
     examinationInput(e)
     if (e.target.dataset.type === 'inputTariff') saveInput1()
     e.target.classList.remove('error')
+    hideToast()
   }
 })
 
@@ -509,7 +556,7 @@ allInputs.forEach(input => {
   }
 })
 
-// === Enter → расчёт (пункт 8) ===
+// === Enter → расчёт ===
 calculatorElem.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target.matches('input')) {
     e.preventDefault()
@@ -630,10 +677,6 @@ allInputsForProtection.forEach(input => {
       if (!/^\d+$/.test(pastedText)) {
         e.preventDefault()
         showError('Можно вставлять только цифры!')
-        setTimeout(() => {
-          blockResult.style.color = 'black'
-          blockResult.innerHTML = ''
-        }, 1500)
       }
     })
   }
@@ -651,13 +694,9 @@ const markError = input => {
 const capitalizeFirst = str => str.charAt(0).toUpperCase() + str.slice(1)
 
 const showError = message => {
-  blockResult.style.color = 'red'
-  const capitalizedMessage = capitalizeFirst(message)
-  blockResult.innerHTML = `
-        <div class="fl">
-            <img src="img/dialog-error.svg" alt="error" width="20px">
-            <span>${capitalizedMessage}</span>
-        </div>`
+  showErrorToast(message)
+  playErrorSound()
+  vibrateError()
 }
 
 const formatMoney = amount =>
@@ -754,14 +793,13 @@ function showValidationErrors() {
   }
 }
 
-// === Правильные склонения (пункт 2) ===
 function getPluralEnding(num) {
   const n = Math.abs(num) % 100
   const n1 = n % 10
-  if (n > 10 && n < 20) return '' // 11–19 смен
-  if (n1 === 1) return 'а' // 1 смена
-  if (n1 >= 2 && n1 <= 4) return 'ы' // 2–4 смены
-  return '' // 0, 5–20, 25… смен
+  if (n > 10 && n < 20) return ''
+  if (n1 === 1) return 'а'
+  if (n1 >= 2 && n1 <= 4) return 'ы'
+  return ''
 }
 
 function calculateValues(
@@ -782,9 +820,6 @@ function calculateValues(
   const nightSalary = (nightRate + shiftRate) * nightShifts
 
   // === Сборка доп. часов в смены ===
-  // 1) Ночные часы собираем в полные ночные смены
-  // 2) Остаток ночных добиваем дневными → ещё одна ночная смена
-  // 3) Оставшиеся дневные собираем в дневные смены
   let remainingNight = additionallyNightHours
   let remainingDay = additionallyHours
 
@@ -808,8 +843,6 @@ function calculateValues(
   additionalDayShifts += Math.floor(remainingDay / HOURS_IN_SHIFT)
   remainingDay = remainingDay % HOURS_IN_SHIFT
 
-  // === Оплата доп. часов ===
-  // Добитые дневные часы оплачиваются по ночному тарифу
   const additionallyNightHoursPaid =
     additionallyNightHours +
     (additionallyHours - remainingDay - additionalDayShifts * HOURS_IN_SHIFT)
@@ -827,7 +860,6 @@ function calculateValues(
   sumAdditionally = addDaySalary
   sumAdditionallyNight = addNightSalary
 
-  // === Молоко: за обычные смены + за каждую полную доп. смену ===
   let milkCompensation
   if (checkboxAdvance.checked) {
     milkCompensation = 0
@@ -854,7 +886,6 @@ function calculateValues(
 
   sumNightHoliday = holidayNightInShifts * nightRate
 
-  // «Доп. начисления» — только выходные смены
   sumWeekend = weekendSalary
 
   sum =
@@ -872,7 +903,6 @@ function calculateValues(
   sumClean = sum - taxAmount
   sumNal = taxAmount
 
-  // Ночные = ночная надбавка по сменам + доп. ночные часы (включая добитые)
   sumNight = nightRate * nightShifts + addNightSalary
   sumMilk = milkCompensation
 
@@ -998,10 +1028,14 @@ function renderBlock() {
     <button type="button" class="copy-result-btn">📋 Скопировать результат</button>`
 }
 
-// === Кнопки (пункт 14) ===
+// === Кнопки ===
 submitBtn.addEventListener('click', function () {
-  showBlock(blockResult)
-  calculateSalary()
+  const ok = calculateSalary()
+  if (ok) {
+    showBlock(blockResult)
+  } else {
+    hideBlock(blockResult)
+  }
 })
 
 cleanInput.addEventListener('click', clearAll)
