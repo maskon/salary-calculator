@@ -85,6 +85,7 @@ function showToast(message, color = '#3d9950', duration = 1800) {
   toast.style.whiteSpace = ''
   toast.style.textAlign = ''
   toast.style.maxWidth = ''
+  toast.style.width = ''
   void toast.offsetHeight
   toast.classList.add('show')
   clearTimeout(toast._hideTimer)
@@ -97,7 +98,8 @@ function showErrorToast(message) {
   toast.style.background = 'rgba(200, 40, 40, 0.95)'
   toast.style.whiteSpace = 'normal'
   toast.style.textAlign = 'left'
-  toast.style.maxWidth = 'min(420px, calc(100vw - 16px))'
+  toast.style.maxWidth = 'min(420px, calc(100vw - 20px))'
+  toast.style.width = window.innerWidth <= 480 ? 'calc(100vw - 20px)' : 'auto'
   void toast.offsetHeight
   toast.classList.add('show')
   clearTimeout(toast._hideTimer)
