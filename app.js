@@ -122,8 +122,35 @@ function showToastWhenReady(message, color = '#3d9950') {
   attempt()
 }
 
-// === Звук ошибки (Web Audio API, без файлов) ===
+// === Звук: контекст + разблокировка ===
 let audioCtx = null
+let audioUnlocked = false
+
+// «Прогрев» аудио — вызывается на самом первом жесте пользователя.
+// Браузер разрешает звук после любого взаимодействия, а не только по кнопке.
+function unlockAudio() {
+  if (audioUnlocked) return
+  try {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext
+      if (!AC) return
+      audioCtx = new AC()
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(() => {})
+    }
+    audioUnlocked = true
+  } catch (e) {
+    // Звук — необязательная функция
+  }
+}
+
+// Ловим первое касание в любом месте калькулятора и первое нажатие клавиши.
+// { once: true } — обработчик сработает один раз и снимется.
+if (calculatorElem) {
+  calculatorElem.addEventListener('pointerdown', unlockAudio, { once: true })
+}
+document.addEventListener('keydown', unlockAudio, { once: true })
 
 function playErrorSound() {
   try {
@@ -133,14 +160,12 @@ function playErrorSound() {
       audioCtx = new AC()
     }
 
-    // Некоторые браузеры держат контекст в состоянии 'suspended'
     if (audioCtx.state === 'suspended') {
       audioCtx.resume().catch(() => {})
     }
 
     const now = audioCtx.currentTime
 
-    // Два коротких нисходящих тона — «уип-уип»
     const tones = [
       { freq: 520, start: 0, dur: 0.1 },
       { freq: 380, start: 0.12, dur: 0.14 },
@@ -153,7 +178,6 @@ function playErrorSound() {
       osc.type = 'sine'
       osc.frequency.setValueAtTime(freq, now + start)
 
-      // Плавное затухание, чтобы не было резкого «щелчка» в конце
       gain.gain.setValueAtTime(0.0001, now + start)
       gain.gain.exponentialRampToValueAtTime(0.18, now + start + 0.01)
       gain.gain.exponentialRampToValueAtTime(0.0001, now + start + dur)
@@ -165,11 +189,10 @@ function playErrorSound() {
       osc.stop(now + start + dur + 0.02)
     })
   } catch (e) {
-    // Звук — необязательная функция, молча игнорируем ошибку
+    // noop
   }
 }
 
-// === Вибрация ошибки ===
 function vibrateError() {
   if (navigator.vibrate) {
     try {
@@ -465,13 +488,11 @@ function toggleHelpTooltip() {
 
 if (helpWrapper && helpBtn) {
   if (isHoverCapable) {
-    // Десктоп: hover + focus
     helpWrapper.addEventListener('mouseenter', openHelpTooltip)
     helpWrapper.addEventListener('mouseleave', closeHelpTooltip)
     helpBtn.addEventListener('focus', openHelpTooltip)
     helpBtn.addEventListener('blur', closeHelpTooltip)
   } else {
-    // Мобила: открыть по клику на кнопку, закрыть по клику вне области
     helpBtn.addEventListener('click', e => {
       e.stopPropagation()
       e.preventDefault()
@@ -821,7 +842,6 @@ function calculateValues(
   const nightRate = (shiftRate * NIGHT_PERCENT) / 100
   const nightSalary = (nightRate + shiftRate) * nightShifts
 
-  // === Сборка доп. часов в смены ===
   let remainingNight = additionallyNightHours
   let remainingDay = additionallyHours
 
