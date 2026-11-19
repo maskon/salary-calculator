@@ -532,14 +532,23 @@ input::-moz-placeholder {
 
 /* ===== Кнопка «Скопировать результат» ===== */
 .copy-result-btn {
-  display: block;
+  display: flex; /* Flexbox для центрирования */
+  align-items: center; /* Центрирование по вертикали */
+  justify-content: center; /* Центрирование по горизонтали */
+  box-sizing: border-box; /* Padding входит в высоту */
+  height: 40px; /* Фиксированная высота — никаких прыжков */
+  min-width: 220px; /* Фиксированная минимальная ширина */
   margin: 15px auto 0;
-  padding: 8px 16px;
+  padding: 0 16px; /* Только горизонтальный отступ */
   background: #5bb3ee;
   color: #fff;
   font-size: 14px;
+  font-weight: 500;
+  line-height: 1; /* Сбрасываем стандартный интерлиньяж */
   border-radius: 6px;
   cursor: pointer;
+  text-align: center;
+  white-space: nowrap; /* Текст не переносится */
   transition:
     background-color 0.25s ease,
     transform 0.15s ease;
