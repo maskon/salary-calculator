@@ -1047,7 +1047,7 @@ function renderBlock() {
     <img src="img/receipt.svg" alt="receipt" width="20px"> Сумма налога: 
     <span class="result-sp">${formatMoney(sumNal)}</span>
     </div>
-    <button type="button" class="copy-result-btn">📋 Скопировать результат</button>`
+    <button type="button" class="copy-result-btn">Скопировать результат</button>`
 }
 
 // === Кнопки ===
