@@ -986,7 +986,7 @@ function renderBlock() {
   if (sumNight > 0) {
     additionalBlocks += `
     <div class="fl">
-      <img src="img/weather-few-clouds-night.svg" alt="night" width="20px"> Ночные: 
+      <img src="img/crescent-moon.svg" alt="night" width="20px"> Ночные: 
       <span class="result-sp">${formatMoney(sumNight)}</span>
     </div>`
   }
@@ -994,7 +994,7 @@ function renderBlock() {
   if (sumWeekend > 0) {
     additionalBlocks += `
     <div class="fl">
-      <img src="img/money.svg" alt="money" width="20px"> Доп. начисления:
+      <img src="img/money-with-wings.svg" alt="money" width="20px"> Доп. начисления:
       <span class="result-sp">${formatMoney(sumWeekend)}</span>
     </div>`
   }
@@ -1010,7 +1010,7 @@ function renderBlock() {
   if (sumNightHoliday > 0) {
     additionalBlocks += `
     <div class="fl">
-      <img src="img/zzz.svg" alt="nalog" width="20px" height='20px'> Праздничные ночные: 
+      <img src="img/zzz.svg" alt="zzz" width="20px" height='20px'> Праздничные ночные: 
       <span class="result-sp">${formatMoney(sumNightHoliday)}</span>
     </div>`
   }
@@ -1022,12 +1022,12 @@ function renderBlock() {
         <span>Размер зарплаты:</span>
       </div>
       <div class="result-sp-fs">
-        <img src="img/piggy-bank.svg" alt="piggy-bank" width="28px">
+        <img src="img/bank.svg" alt="bank" width="28px">
         <span>${formatMoney(sumClean)}</span>
       </div>
     </div>
     <div class="fl">
-      <img src="img/earnings.svg" alt="earnings" width="20px"> Начисленная сумма: 
+      <img src="img/chart-increasing.svg" alt="chart-increasing" width="20px"> Начисленная сумма: 
       <span class="result-sp">${formatMoney(sum)}</span>
     </div>
     <div class="fl">
@@ -1035,16 +1035,16 @@ function renderBlock() {
       <span class="result-sp">${formatMoney(sumSalaryPercent)}</span>
     </div>
     <div class="fl">
-      <img src="img/milk-carton.svg" alt="milk" width="20px"> Компенсация молока: 
+      <img src="img/glass-of-milk.svg" alt="milk" width="20px"> Компенсация молока: 
       <span class="result-sp">${formatMoney(sumMilk)}</span>
     </div>
     <div class="fl">
-      <img src="img/hazard.svg" alt="hazard" width="20px"> Вредные условия: 
+      <img src="img/radioactive.svg" alt="radioactive" width="20px"> Вредные условия: 
       <span class="result-sp">${formatMoney(sumHarmfulConditions)}</span>
     </div>
     ${additionalBlocks}
     <div class="fl">
-    <img src="img/tax.svg" alt="nalog" width="20px"> Сумма налога: 
+    <img src="img/receipt.svg" alt="receipt" width="20px"> Сумма налога: 
     <span class="result-sp">${formatMoney(sumNal)}</span>
     </div>
     <button type="button" class="copy-result-btn">📋 Скопировать результат</button>`
