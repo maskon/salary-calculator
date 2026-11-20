@@ -4,11 +4,11 @@
   "description": "Расчет заработной платы",
   "start_url": ".",
   "scope": ".",
-  "version": "4.06",
+  "version": "4.19",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#1668e3",
+  "background_color": "#121212",
+  "theme_color": "#121212",
   "icons": [
     {
       "src": "favicon/icon-512x512.png",
