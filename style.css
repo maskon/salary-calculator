@@ -9,7 +9,6 @@
   --text-main: #333333;
   --text-muted: #5f6569;
   --color-text: #3c3e3e;
-  --color-sheme: light;
   --color-error: red;
 
   --blue: #0062a3;
@@ -25,6 +24,8 @@
   --text-btn-clear: #5f6569;
 
   --theme-color: #1668e3;
+
+  color-sheme: light;
 }
 
 body.dark-theme {
@@ -35,7 +36,6 @@ body.dark-theme {
   --text-main: #e0e0e0;
   --text-muted: #a0a0a0;
   --color-text: #e0e0e0;
-  --color-sheme: dark;
 
   --blue: #4da3ff;
   --dark-blue: #66a3ff;
@@ -49,6 +49,8 @@ body.dark-theme {
   --text-btn-clear: #a0a0a0;
 
   --theme-color: #1e1e1e;
+
+  color-sheme: dark;
 }
 
 /* Обнуление */
