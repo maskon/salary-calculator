@@ -1,13 +1,52 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 :root {
-  --bg: #333333;
+  /* Светлая тема (по умолчанию) */
+  --bg-body: #ffffff;
+  --bg-card: #f5f5f5;
+  --bg-result: #ffdeae;
+  --bg-input: #ffffff;
+  --text-main: #333333;
+  --text-muted: #5f6569;
   --color-text: #3c3e3e;
   --color-error: red;
+
   --blue: #0062a3;
   --dark-blue: #1668e3;
   --green: #3d9950;
+
   --border-color: #1668e3;
+  --border-input: #b9c0c5;
+  --border-panel: #dae1e8;
+
+  --bg-btn: #5bb3ee;
+  --bg-btn-clear: #dae1e8;
+  --text-btn-clear: #5f6569;
+
+  --theme-color: #1668e3;
+}
+
+body.dark-theme {
+  --bg-body: #121212;
+  --bg-card: #1e1e1e;
+  --bg-result: #252525;
+  --bg-input: #2c2c2c;
+  --text-main: #e0e0e0;
+  --text-muted: #a0a0a0;
+  --color-text: #e0e0e0;
+
+  --blue: #4da3ff;
+  --dark-blue: #66a3ff;
+  --green: #81c784;
+
+  --border-input: #444444;
+  --border-panel: #333333;
+
+  --bg-btn: #1668e3;
+  --bg-btn-clear: #333333;
+  --text-btn-clear: #a0a0a0;
+
+  --theme-color: #1e1e1e;
 }
 
 /* Обнуление */
@@ -54,13 +93,11 @@ button::-moz-focus-inner {
   border: 0;
 }
 
-/* Убираем outline только у полей ввода, не глобально */
 input:focus,
 textarea:focus {
   outline: none;
 }
 
-/* Видимый фокус для клавиатурной навигации */
 :focus-visible {
   outline: 2px solid var(--dark-blue);
   outline-offset: 2px;
@@ -72,31 +109,78 @@ body {
   margin: 0;
   font-size: 16px;
   line-height: 1.2;
-  color: var(--bg);
+  color: var(--text-main);
+  background-color: var(--bg-body);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
+/* ==========================================
+   ШАПКА (Заголовок + Кнопка темы)
+   ========================================== */
+.header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.title {
+  color: var(--color-text);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.25em;
+  margin: 0;
+  text-align: left;
+  transition: color 0.3s ease;
+}
+
+/* Кнопка переключения темы */
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-panel);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.2s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+}
+
+/* ==========================================
+   ОСНОВНОЙ БЛОК
+   ========================================== */
 .calculator {
   display: flex;
   flex-direction: column;
   min-height: 90vh;
   max-width: 600px;
   margin: 0 auto 10px;
-  background-color: #f5f5f5;
-  border: 1px solid #dae1e8;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-panel);
   padding: 10px;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .main {
   flex: 1;
-}
-
-.title {
-  color: var(--color-text);
-  font-size: 30px;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1.25em;
-  padding: 10px;
 }
 
 .calculator__item {
@@ -104,13 +188,14 @@ body {
   justify-content: space-between;
   align-items: center;
   font-size: 18px;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
 
 .calculator__item__text {
   font-size: 13px;
   color: var(--blue);
   margin-bottom: 10px;
+  transition: color 0.3s ease;
 }
 
 .calculator__item label {
@@ -130,15 +215,19 @@ body {
   margin-bottom: 0;
 }
 
+/* ==========================================
+   ИНПУТЫ
+   ========================================== */
 .form-control {
   font-size: 18px;
   font-weight: 700;
   padding: 4px;
-  border: 2px solid #b9c0c5;
+  border: 2px solid var(--border-input);
   box-sizing: border-box;
   color: var(--green);
   caret-color: var(--dark-blue);
-  -webkit-caret-color: var(--dark-blue);
+  background-color: var(--bg-input);
+  border-radius: 6px;
   transition: all 0.3s ease;
 }
 
@@ -146,8 +235,6 @@ body {
   border-color: var(--border-color);
   outline: none;
   box-shadow: 0 0 0 3px rgba(9, 9, 128, 0.2);
-  caret-color: var(--dark-blue);
-  -webkit-caret-color: var(--dark-blue);
 }
 
 .form-control.error {
@@ -191,10 +278,12 @@ body {
 input::-webkit-input-placeholder {
   font-weight: 400;
   opacity: 0.6;
+  color: var(--text-muted);
 }
 input::-moz-placeholder {
   font-weight: 400;
   opacity: 0.6;
+  color: var(--text-muted);
 }
 
 .input__block__none {
@@ -215,8 +304,9 @@ input::-moz-placeholder {
 }
 
 .checkbox {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--dark-blue);
 }
 
 .checkbox__block {
@@ -227,23 +317,29 @@ input::-moz-placeholder {
   margin-bottom: 10px;
 }
 
+/* ==========================================
+   КНОПКИ
+   ========================================== */
 .buttons {
   display: flex;
   justify-content: space-between;
   margin: 20px -10px 0;
-  background-color: #dae1e8;
+  background-color: var(--border-panel);
   padding: 15px 10px;
   overflow: hidden;
+  transition: background-color 0.3s ease;
 }
 
 .btn {
-  background-color: #5bb3ee;
+  background-color: var(--bg-btn);
   color: #fff;
   padding: 10px 15px;
   font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-right: 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition:
     background-color 0.3s ease,
     color 0.3s ease,
@@ -252,8 +348,8 @@ input::-moz-placeholder {
 }
 
 .btn--clear {
-  background-color: #dae1e8;
-  color: #5f6569;
+  background-color: var(--bg-btn-clear);
+  color: var(--text-btn-clear);
 }
 
 .btn:hover {
@@ -263,23 +359,22 @@ input::-moz-placeholder {
   transform: translateY(-1px);
 }
 
-.btn:focus {
-  background-color: var(--blue);
-  color: #fff;
-  border: 1px solid #555;
-}
-
 .btn:active {
   transform: translateY(1px) scale(0.98);
   box-shadow: 0 2px 6px rgba(22, 104, 227, 0.2);
 }
 
+/* ==========================================
+   БЛОК РЕЗУЛЬТАТА
+   ========================================== */
 .text {
   display: none;
-  background-color: #ffdeae;
+  background-color: var(--bg-result);
   margin: 0 -10px 100px;
   padding: 15px;
   overflow: auto;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
 }
 
 .fl {
@@ -287,22 +382,24 @@ input::-moz-placeholder {
   align-items: center;
   gap: 5px;
   font-size: 18px;
-  margin-bottom: 3px;
+  margin-bottom: 8px;
 }
 
 .subtitle {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--bg);
+  color: var(--color-text);
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 5px;
+  transition: color 0.3s ease;
 }
 
 .result-sp {
   color: var(--dark-blue);
   font-weight: 400;
+  transition: color 0.3s ease;
 }
 
 .result-sp-fs {
@@ -312,9 +409,9 @@ input::-moz-placeholder {
   color: var(--dark-blue);
   font-size: 34px;
   font-weight: 400;
+  transition: color 0.3s ease;
 }
 
-/* ===== Отдельная анимация главной суммы «Размер зарплаты» ===== */
 .result-sp-fs span {
   display: inline-block;
   animation: resultPulse 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
@@ -339,216 +436,26 @@ input::-moz-placeholder {
   margin-bottom: 10px;
 }
 
-/* ===== PWA ЛОАДЕР ===== */
-#pwa-loader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-  transition: opacity 0.3s ease-out;
-}
-
-.loader-logo {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 20px;
-  animation: logo-pulse 2s infinite;
-}
-
-@keyframes logo-pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.loader-spinner {
-  width: 50px;
-  height: 50px;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #1668e3;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.loader-text {
-  margin-top: 20px;
-  color: #333;
-  font-family: Arial, sans-serif;
-  font-size: 18px;
-  font-weight: 500;
-}
-
-.pwa-loaded #pwa-loader {
-  opacity: 0;
-  pointer-events: none;
-}
-
-#app-content {
-  display: none;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-#app-content.show {
-  display: block;
-  opacity: 1;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.content-fade-in {
-  animation: fadeIn 0.5s ease-out;
-}
-
-/* ===== Появление блоков (доп. часы / ночные / результат) ===== */
-.checkbox__block.is-visible,
-.input__block__none.is-visible,
-#block--result.is-visible {
-  display: block;
-  animation: blockIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@keyframes blockIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* ===== Каскадное появление строк результата ===== */
-#block--result > * {
-  opacity: 0;
-  animation: rowIn 0.4s ease forwards;
-}
-#block--result > *:nth-child(1) {
-  animation-delay: 0.05s;
-}
-#block--result > *:nth-child(2) {
-  animation-delay: 0.1s;
-}
-#block--result > *:nth-child(3) {
-  animation-delay: 0.15s;
-}
-#block--result > *:nth-child(4) {
-  animation-delay: 0.2s;
-}
-#block--result > *:nth-child(5) {
-  animation-delay: 0.25s;
-}
-#block--result > *:nth-child(6) {
-  animation-delay: 0.3s;
-}
-#block--result > *:nth-child(7) {
-  animation-delay: 0.35s;
-}
-#block--result > *:nth-child(8) {
-  animation-delay: 0.4s;
-}
-#block--result > *:nth-child(9) {
-  animation-delay: 0.45s;
-}
-#block--result > *:nth-child(10) {
-  animation-delay: 0.5s;
-}
-#block--result > *:nth-child(11) {
-  animation-delay: 0.55s;
-}
-
-@keyframes rowIn {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* ===== Тост «✓ Сохранено» / «Данные восстановлены» ===== */
-.toast {
-  position: fixed;
-  left: 50%;
-  bottom: 24px;
-  transform: translate(-50%, 16px);
-  background: #3d9950;
-  color: #fff;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
-  line-height: 1.2;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    opacity 0.25s ease,
-    transform 0.25s ease;
-  z-index: 9999;
-  max-width: 90vw;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translate(-50%, 0);
-}
-
-/* ===== Кнопка «Скопировать результат» ===== */
+/* Кнопка копирования */
 .copy-result-btn {
-  display: flex; /* Flexbox для центрирования */
-  align-items: center; /* Центрирование по вертикали */
-  justify-content: center; /* Центрирование по горизонтали */
-  box-sizing: border-box; /* Padding входит в высоту */
-  height: 40px; /* Фиксированная высота — никаких прыжков */
-  min-width: 220px; /* Фиксированная минимальная ширина */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 40px;
+  width: fit-content;
+  min-width: 220px;
   margin: 15px auto 0;
-  padding: 0 16px; /* Только горизонтальный отступ */
-  background: #5bb3ee;
+  padding: 0 16px;
+  background: var(--bg-btn);
   color: #fff;
   font-size: 14px;
   font-weight: 500;
-  line-height: 1; /* Сбрасываем стандартный интерлиньяж */
+  line-height: 1;
   border-radius: 6px;
   cursor: pointer;
   text-align: center;
-  white-space: nowrap; /* Текст не переносится */
+  white-space: nowrap;
   transition:
     background-color 0.25s ease,
     transform 0.15s ease;
@@ -562,7 +469,19 @@ input::-moz-placeholder {
   transform: scale(0.97);
 }
 
-/* ===== Кнопка «?» и подсказка (доп. часы) ===== */
+/* ==========================================
+   ИКОНКИ В ТЕМНОЙ ТЕМЕ (Инверсия в белый)
+   ========================================== */
+body.dark-theme .calculator__item img,
+body.dark-theme .fl img,
+body.dark-theme .subtitle img,
+body.dark-theme .result-sp-fs img {
+  filter: invert(1) brightness(1.2) contrast(1.2);
+}
+
+/* ==========================================
+   КНОПКА "?" И ПОДСКАЗКА
+   ========================================== */
 .help-wrapper {
   position: relative;
   display: flex;
@@ -574,13 +493,13 @@ input::-moz-placeholder {
 .help-btn {
   position: relative;
   z-index: 51;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 2px solid var(--dark-blue);
-  background: #fff;
+  border: 1.5px solid var(--dark-blue);
+  background: var(--bg-card);
   color: var(--dark-blue);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   line-height: 1;
   display: inline-flex;
@@ -590,32 +509,35 @@ input::-moz-placeholder {
   padding: 0;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 2px 4px rgba(22, 104, 227, 0.1);
   transition:
     background-color 0.2s ease,
     color 0.2s ease,
     transform 0.15s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    border-color 0.3s ease;
 }
 
-/* Hover — работает везде, где есть настоящий hover */
 .help-btn:hover {
   background: var(--dark-blue);
   color: #fff;
   box-shadow: 0 4px 12px rgba(22, 104, 227, 0.3);
 }
 
-/* Клавиатурный фокус */
-.help-btn:focus-visible {
-  background: var(--dark-blue);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(22, 104, 227, 0.3);
-}
-
-/* Нажатие */
 .help-btn:active {
   background: var(--dark-blue);
   color: #fff;
   transform: scale(0.93);
+}
+
+body.dark-theme .help-btn {
+  color: #fff;
+  border-color: #fff;
+}
+
+body.dark-theme .help-btn:hover {
+  background: #fff;
+  color: #121212;
 }
 
 .help-tooltip {
@@ -650,7 +572,6 @@ input::-moz-placeholder {
   border: 6px solid transparent;
 }
 
-/* Десктоп (есть hover + точный указатель): тултип под кнопкой */
 @media (hover: hover) and (pointer: fine) {
   .help-tooltip {
     top: calc(100% + 6px);
@@ -662,7 +583,6 @@ input::-moz-placeholder {
   }
 }
 
-/* Мобила / тач: тултип над кнопкой */
 @media (hover: none), (pointer: coarse) {
   .help-tooltip {
     bottom: calc(100% + 12px);
@@ -674,7 +594,6 @@ input::-moz-placeholder {
   }
 }
 
-/* Открытое состояние */
 .help-wrapper.is-open .help-tooltip {
   opacity: 1;
   visibility: visible;
@@ -682,68 +601,205 @@ input::-moz-placeholder {
   transform: translate(-50%, 0);
 }
 
-/* ===== Медиа-запросы ===== */
-@media (max-width: 457px) {
-  .calculator {
-    padding: 10px 8px;
-  }
+/* ==========================================
+   ТОСТ
+   ========================================== */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translate(-50%, 16px);
+  background: #3d9950;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.2;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  z-index: 9999;
+  max-width: 90vw;
+  text-align: center;
+  white-space: nowrap;
+}
 
-  .title {
-    font-size: 20px;
-    padding: 15px 10px;
-  }
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
 
-  .calculator__item {
-    font-size: 17px;
-    margin-bottom: 6px;
-  }
+/* ==========================================
+   PWA ЛОАДЕР
+   ========================================== */
+#pwa-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-body);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  transition:
+    opacity 0.3s ease-out,
+    background-color 0.3s ease;
+}
 
-  .text {
-    padding: 10px 8px;
-  }
+.loader-logo {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  animation: logo-pulse 2s infinite;
+}
 
-  .form-control {
-    width: 100px;
+@keyframes logo-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
   }
-
-  .fl label {
-    font-size: 16px;
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
   }
-
-  .mb {
-    margin-bottom: 8px;
-  }
-
-  .checkbox__block p {
-    margin-bottom: 6px;
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
-@media (max-width: 768px) {
-  .install-btn {
-    bottom: 12px !important;
-    right: 10px !important;
-    font-size: 13px !important;
-    padding: 10px 16px !important;
-    max-width: 140px !important;
-    background: linear-gradient(135deg, rgba(22, 104, 227, 0.7), rgba(13, 71, 161, 0.7)) !important;
+.loader-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--border-panel);
+  border-top: 3px solid var(--dark-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
-@media (max-width: 480px) {
-  .install-btn {
-    bottom: 10px !important;
-    right: 8px !important;
-    padding: 10px 15px !important;
-    font-size: 12px !important;
-    max-width: 120px !important;
-  }
+.loader-text {
+  margin-top: 20px;
+  color: var(--text-main);
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
 
-  .text {
-    margin-bottom: 40px !important;
+.pwa-loaded #pwa-loader {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#app-content {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+#app-content.show {
+  display: block;
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
+.content-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ==========================================
+   АНИМАЦИИ ПОЯВЛЕНИЯ
+   ========================================== */
+.checkbox__block.is-visible,
+.input__block__none.is-visible,
+#block--result.is-visible {
+  display: block;
+  animation: blockIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes blockIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+#block--result > * {
+  opacity: 0;
+  animation: rowIn 0.4s ease forwards;
+}
+#block--result > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+#block--result > *:nth-child(2) {
+  animation-delay: 0.1s;
+}
+#block--result > *:nth-child(3) {
+  animation-delay: 0.15s;
+}
+#block--result > *:nth-child(4) {
+  animation-delay: 0.2s;
+}
+#block--result > *:nth-child(5) {
+  animation-delay: 0.25s;
+}
+#block--result > *:nth-child(6) {
+  animation-delay: 0.3s;
+}
+#block--result > *:nth-child(7) {
+  animation-delay: 0.35s;
+}
+#block--result > *:nth-child(8) {
+  animation-delay: 0.4s;
+}
+#block--result > *:nth-child(9) {
+  animation-delay: 0.45s;
+}
+#block--result > *:nth-child(10) {
+  animation-delay: 0.5s;
+}
+
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ==========================================
+   ФУТЕР
+   ========================================== */
 .footer {
   margin-top: auto;
   padding: 10px 0;
@@ -761,7 +817,68 @@ input::-moz-placeholder {
   color: var(--dark-blue);
 }
 
-/* ===== prefers-reduced-motion ===== */
+/* ==========================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ
+   ========================================== */
+@media (max-width: 457px) {
+  .header-wrapper {
+    gap: 8px;
+    padding: 10px 5px;
+  }
+
+  .title {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  /* Уменьшаем кнопку на мобильных */
+  .theme-toggle {
+    width: 28px; /* Было 32px */
+    height: 28px; /* Было 32px */
+    font-size: 14px; /* Было 16px */
+  }
+
+  .calculator {
+    padding: 10px 8px;
+  }
+  .calculator__item {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+  .text {
+    padding: 10px 8px;
+  }
+  .form-control {
+    width: 100px;
+  }
+  .fl label {
+    font-size: 16px;
+  }
+  .mb {
+    margin-bottom: 8px;
+  }
+  .checkbox__block p {
+    margin-bottom: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .toast {
+    max-width: calc(100vw - 20px);
+    width: calc(100vw - 20px);
+    padding: 12px 14px;
+    font-size: 13.5px;
+    line-height: 1.35;
+    bottom: 16px;
+  }
+  .text {
+    margin-bottom: 40px !important;
+  }
+}
+
+/* ==========================================
+   ДОСТУПНОСТЬ
+   ========================================== */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
