@@ -42,17 +42,19 @@ const metaThemeColor = document.querySelector('meta[name="theme-color"]')
 
 // Функция применения темы
 function applyTheme(theme) {
+  const html = document.documentElement;
   if (theme === 'dark') {
-    document.body.classList.add('dark-theme')
-    if (themeToggleBtn) themeToggleBtn.textContent = '☀️' // Иконка для переключения на светлую
-    if (metaThemeColor) metaThemeColor.setAttribute('content', '#1e1e1e') // Цвет статус-бара (шапки) в PWA
+    document.body.classList.add('dark-theme');
+    html.style.colorScheme = 'dark'; // Явно для корневого элемента
+    if (themeToggleBtn) themeToggleBtn.textContent = '☀️';
+    if (metaThemeColor) metaThemeColor.setAttribute('content', '#121212');
   } else {
-    document.body.classList.remove('dark-theme')
-    if (themeToggleBtn) themeToggleBtn.textContent = '🌙' // Иконка для переключения на темную
-    if (metaThemeColor) metaThemeColor.setAttribute('content', '#1668e3')
+    document.body.classList.remove('dark-theme');
+    html.style.colorScheme = 'light'; // Явно для корневого элемента
+    if (themeToggleBtn) themeToggleBtn.textContent = '🌙';
+    if (metaThemeColor) metaThemeColor.setAttribute('content', '#1668e3');
   }
 }
-
 // Инициализация темы при загрузке
 function initTheme() {
   const savedTheme = localStorage.getItem('app_theme')
