@@ -34,6 +34,54 @@ let sum,
   sumAdditionally,
   sumAdditionallyNight
 
+// ==========================================
+// ЛОГИКА ТЕМНОЙ ТЕМЫ
+// ==========================================
+const themeToggleBtn = document.getElementById('theme-toggle')
+const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+
+// Функция применения темы
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.body.classList.add('dark-theme')
+    if (themeToggleBtn) themeToggleBtn.textContent = '☀️' // Иконка для переключения на светлую
+    if (metaThemeColor) metaThemeColor.setAttribute('content', '#1e1e1e') // Цвет статус-бара (шапки) в PWA
+  } else {
+    document.body.classList.remove('dark-theme')
+    if (themeToggleBtn) themeToggleBtn.textContent = '🌙' // Иконка для переключения на темную
+    if (metaThemeColor) metaThemeColor.setAttribute('content', '#1668e3')
+  }
+}
+
+// Инициализация темы при загрузке
+function initTheme() {
+  const savedTheme = localStorage.getItem('app_theme')
+
+  if (savedTheme) {
+    // Если пользователь уже выбирал тему ранее — ставим её
+    applyTheme(savedTheme)
+  } else {
+    // Если выбора нет — проверяем системные настройки устройства
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    applyTheme(prefersDark ? 'dark' : 'light')
+  }
+}
+
+// Слушатель клика по кнопке
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener('click', () => {
+    const isDark = document.body.classList.contains('dark-theme')
+    const newTheme = isDark ? 'light' : 'dark'
+    applyTheme(newTheme)
+    localStorage.setItem('app_theme', newTheme) // Запоминаем выбор
+  })
+}
+
+// Запускаем при загрузке страницы
+window.addEventListener('DOMContentLoaded', initTheme)
+// На всякий случай применяем сразу, чтобы избежать "мигания" белым фоном
+initTheme()
+
 const STORAGE_KEY_INPUT1 = 'calculator_input1'
 const HOURS_IN_SHIFT = 8
 const NIGHT_PERCENT = 40
@@ -979,8 +1027,6 @@ function clearAll() {
 }
 
 function renderBlock() {
-  blockResult.style.color = 'black'
-
   let additionalBlocks = ''
 
   if (sumNight > 0) {
