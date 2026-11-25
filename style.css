@@ -25,7 +25,7 @@
 
   --theme-color: #1668e3;
 
-  color-sheme: light;
+  color-scheme: light;
 }
 
 body.dark-theme {
@@ -50,7 +50,7 @@ body.dark-theme {
 
   --theme-color: #1e1e1e;
 
-  color-sheme: dark;
+  color-scheme: dark;
 }
 
 /* Обнуление */
@@ -494,6 +494,13 @@ body.dark-theme .result-sp-fs img {
   margin-bottom: 8px;
 }
 
+.help-wrapper.is-open .help-tooltip {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none; /* тап «сквозь» тултип попадает в кнопку */
+  transform: translate(-50%, 0);
+}
+
 .help-btn {
   position: relative;
   z-index: 51;
@@ -523,15 +530,29 @@ body.dark-theme .result-sp-fs img {
 }
 
 .help-btn:hover {
-  background: var(--dark-blue);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(22, 104, 227, 0.3);
+  background: var(--bg-card);
+  color: var(--dark-blue);
+  box-shadow: 0 2px 4px rgba(22, 104, 227, 0.1);
 }
 
 .help-btn:active {
   background: var(--dark-blue);
   color: #fff;
   transform: scale(0.93);
+}
+
+.help-btn:focus:not(:focus-visible) {
+  background: var(--bg-card);
+  color: var(--dark-blue);
+  box-shadow: 0 2px 4px rgba(22, 104, 227, 0.1);
+  outline: none;
+}
+
+body.dark-theme .help-btn:focus:not(:focus-visible) {
+  background: var(--bg-card);
+  color: #fff;
+  border-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 body.dark-theme .help-btn {
