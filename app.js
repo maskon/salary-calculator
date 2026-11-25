@@ -42,19 +42,20 @@ const metaThemeColor = document.querySelector('meta[name="theme-color"]')
 
 // Функция применения темы
 function applyTheme(theme) {
-  const html = document.documentElement;
+  const html = document.documentElement
   if (theme === 'dark') {
-    document.body.classList.add('dark-theme');
-    html.style.colorScheme = 'dark'; // Явно для корневого элемента
-    if (themeToggleBtn) themeToggleBtn.textContent = '☀️';
-    if (metaThemeColor) metaThemeColor.setAttribute('content', '#121212');
+    document.body.classList.add('dark-theme')
+    html.style.colorScheme = 'dark' // Явно для корневого элемента
+    if (themeToggleBtn) themeToggleBtn.textContent = '☀️'
+    if (metaThemeColor) metaThemeColor.setAttribute('content', '#121212')
   } else {
-    document.body.classList.remove('dark-theme');
-    html.style.colorScheme = 'light'; // Явно для корневого элемента
-    if (themeToggleBtn) themeToggleBtn.textContent = '🌙';
-    if (metaThemeColor) metaThemeColor.setAttribute('content', '#1668e3');
+    document.body.classList.remove('dark-theme')
+    html.style.colorScheme = 'light' // Явно для корневого элемента
+    if (themeToggleBtn) themeToggleBtn.textContent = '🌙'
+    if (metaThemeColor) metaThemeColor.setAttribute('content', '#1668e3')
   }
 }
+
 // Инициализация темы при загрузке
 function initTheme() {
   const savedTheme = localStorage.getItem('app_theme')
@@ -159,17 +160,6 @@ function showErrorToast(message) {
 function hideToast() {
   const toast = document.getElementById('toast')
   if (toast) toast.classList.remove('show')
-}
-
-function showToastWhenReady(message, color = '#3d9950') {
-  const attempt = () => {
-    if (document.body.classList.contains('pwa-loaded')) {
-      showToast(message, color)
-    } else {
-      setTimeout(attempt, 200)
-    }
-  }
-  attempt()
 }
 
 // === Звук: контекст + разблокировка ===
@@ -513,7 +503,8 @@ function trackCheckbox2(checkbox) {
 trackCheckbox2(checkboxAdditionally)
 
 // === Подсказка «?» под блоком доп. часов ===
-const isHoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+const isHoverCapable =
+  window.matchMedia('(hover: hover)').matches && window.matchMedia('(pointer: fine)').matches
 
 function openHelpTooltip() {
   if (!helpWrapper || !helpBtn) return
@@ -538,24 +529,50 @@ function toggleHelpTooltip() {
 
 if (helpWrapper && helpBtn) {
   if (isHoverCapable) {
+    // Десктоп: только hover, без фокуса
     helpWrapper.addEventListener('mouseenter', openHelpTooltip)
-    helpWrapper.addEventListener('mouseleave', closeHelpTooltip)
-    helpBtn.addEventListener('focus', openHelpTooltip)
-    helpBtn.addEventListener('blur', closeHelpTooltip)
-  } else {
+    helpWrapper.addEventListener('mouseleave', () => {
+      closeHelpTooltip()
+      helpBtn.blur() // на случай, если фокус всё же появился
+    })
+
+    // По клику всё равно работает (для доступности и тач-ноутбуков)
     helpBtn.addEventListener('click', e => {
-      e.stopPropagation()
       e.preventDefault()
-      openHelpTooltip()
+      toggleHelpTooltip()
+    })
+  } else {
+    let lastPointerToggle = 0
+
+    helpBtn.addEventListener('pointerdown', e => {
+      e.preventDefault()
+      e.stopPropagation()
+      lastPointerToggle = Date.now()
+
+      // Если подсказка открыта — закрываем и снимаем фокус.
+      // Если закрыта — открываем.
+      if (helpWrapper.classList.contains('is-open')) {
+        closeHelpTooltip()
+        helpBtn.blur() // ← вот это снимает синий «фокусный» вид
+      } else {
+        openHelpTooltip()
+      }
     })
 
     document.addEventListener('click', e => {
-      if (!helpWrapper.contains(e.target)) closeHelpTooltip()
+      if (Date.now() - lastPointerToggle < 350) return
+      if (!helpWrapper.contains(e.target)) {
+        closeHelpTooltip()
+        helpBtn.blur() // на всякий случай снимаем фокус и при клике вне
+      }
     })
   }
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeHelpTooltip()
+    if (e.key === 'Escape') {
+      closeHelpTooltip()
+      helpBtn.blur()
+    }
   })
 }
 
@@ -570,7 +587,6 @@ const saveInput1 = () => {
     if (value === lastSavedTariff) return
     lastSavedTariff = value
     localStorage.setItem(STORAGE_KEY_INPUT1, value)
-    if (value !== '') showToast('✓ Сохранено')
   }, 500)
 }
 
@@ -579,7 +595,6 @@ const loadInput1 = () => {
   if (saved !== null && saved !== '') {
     inputTariff.value = saved
     lastSavedTariff = saved
-    showToastWhenReady('Данные восстановлены', '#1668e3')
   }
 }
 
