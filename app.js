@@ -433,14 +433,7 @@ function validateAllInputs() {
     inputFree.classList.remove('error')
   }
 
-  const maxHolidayNightHours = holidayShifts * 8
-  if (holidayNightHours > maxHolidayNightHours) {
-    markError(inputHolidayNight)
-    hasErrors = true
-  } else {
-    inputHolidayNight.classList.remove('error')
-  }
-
+  inputHolidayNight.classList.remove('error')
   inputAdditionally.classList.remove('error')
   inputAdditionallyNight.classList.remove('error')
 
@@ -603,7 +596,19 @@ const clearInput1 = () => {
   lastSavedTariff = null
 }
 
+// Восстанавливаем сохраненный тариф
 window.addEventListener('DOMContentLoaded', loadInput1)
+
+// Восстанавливаем видимость блоков, если чекбоксы были включены
+window.addEventListener('DOMContentLoaded', () => {
+  if (checkboxNight.checked) {
+    showBlock(checkboxBlockNight)
+  }
+  if (checkboxAdditionally.checked) {
+    showBlock(blockAdditionally)
+    showBlock(blockAdditionallyNight)
+  }
+})
 
 // === Обработка ввода ===
 calculatorElem.addEventListener('input', e => {
@@ -667,17 +672,6 @@ function validateShifts(total, night, holiday, weekend, holidayNight) {
 
   if (weekend > total) {
     markError(inputFree)
-    isValid = false
-  }
-
-  if (holidayNight > night * 8) {
-    markError(inputHolidayNight)
-    isValid = false
-  }
-
-  const maxHolidayNightHours = holiday * 8
-  if (holidayNight > maxHolidayNightHours) {
-    markError(inputHolidayNight)
     isValid = false
   }
 
@@ -851,13 +845,6 @@ function showValidationErrors() {
   if (holidayShifts > totalShifts) errors.push('праздничных смен')
   if (weekendShifts > totalShifts) errors.push('выходных смен')
   if (holidayNightHours > nightShifts * 8) errors.push('праздн. ночных часов')
-
-  const maxHolidayNightHours = holidayShifts * 8
-  if (holidayNightHours > maxHolidayNightHours) {
-    errors.push(
-      `праздничных ночных часов (не более ${maxHolidayNightHours}ч. при ${holidayShifts} праздн. смен${getPluralEnding(holidayShifts)})`
-    )
-  }
 
   if (errors.length > 0) {
     let errorMessage
